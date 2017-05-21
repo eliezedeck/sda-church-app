@@ -12,7 +12,14 @@ export const SAuth = new Vuex.Store({
 
   mutations: {
     UPDATE_FIREBASE_USER(state, {user}) {
-      state.user = user
+      if (user) {
+        state.user = {
+          displayName: user.displayName || user.phoneNumber,
+          phoneNumber: user.phoneNumber || ''
+        }
+      } else {
+        state.user = user
+      }
     }
   }
 })

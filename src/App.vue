@@ -32,7 +32,7 @@
               <div class="col-md-12 text-right" style="padding: .5em 1em .5em 1em;">
                 <div>
                   <span v-if="!user">Welcome dear visitor, please <router-link to="/login">login using your Phone</router-link>.</span>
-                  <span v-else>Welcome {{user.displayName}}, <a href="#">logout</a>.</span>
+                  <span v-else>Welcome <strong>{{user.displayName}}</strong>, <a @click.prevent="doLogout" href="#">logout</a>.</span>
                 </div>
               </div>
             </div>
@@ -79,6 +79,7 @@
 </template>
 
 <script>
+  import FApp from './stores/firebase.js'
   import {SAuth} from './stores/auth'
 
 
@@ -88,6 +89,13 @@
     computed: {
       user() {
         return SAuth.state.user
+      }
+    },
+
+    methods: {
+      async doLogout() {
+        await FApp.auth().signOut()
+        this.$router.replace('/')
       }
     }
   }
