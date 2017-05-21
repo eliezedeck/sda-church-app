@@ -5,7 +5,7 @@
         <h1 class="text-center">Login</h1>
 
         <div class="well well-sm">
-          <form>
+          <form @submit.prevent.stop="doSubmit">
             <div v-show="mode === 'send-sms'" class="form-group">
               <label class="control-label">Phone number</label>
               <input v-model="phoneNumber" type="text" placeholder="international format, ex: +261 34 10 234 60" class="form-control" />
@@ -18,12 +18,12 @@
 
             <div v-if="mode === 'send-sms'" id="recaptchaContainer" style="margin-bottom: 1em"></div>
 
-            <div v-show="mode === 'send-sms'" role="group" class="btn-group">
-              <button @click.prevent="doSendSMSCode" :disabled="!phoneNumber || phoneNumber.length < 6 || smsSent" class="btn btn-primary" type="button">Send SMS code</button>
+            <div v-if="mode === 'send-sms'" role="group" class="btn-group">
+              <button @click.prevent="doSendSMSCode" :disabled="!phoneNumber || phoneNumber.length < 6 || smsSent" class="btn btn-primary" type="submit">Send SMS code</button>
             </div>
-            <div v-show="mode === 'confirm-code'" role="group" class="btn-group">
+            <div v-if="mode === 'confirm-code'" role="group" class="btn-group">
               <button @click.prevent="doBackToSendSMS" class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
-              <button @click.prevent="doSendConfirmationCode" :disabled="!confirmationCode || confirmationCode.length < 6 || codeSent" class="btn btn-primary" type="button">Confirm confirmation code</button>
+              <button @click.prevent="doSendConfirmationCode" :disabled="!confirmationCode || confirmationCode.length < 6 || codeSent" class="btn btn-primary" type="submit">Confirm confirmation code</button>
             </div>
           </form>
         </div>
@@ -68,25 +68,35 @@
     },
 
     methods: {
-      doSendSMSCode() {
-        firebase.auth().signInWithPhoneNumber(this.phoneNumber, window.recaptchaVerifier)
-          .then((confirmationResult) => {
-            window.confirmationResult = confirmationResult
-            this.mode = 'confirm-code'
-          })
-          .catch((error) => {
-            window.alert(`Could not send the SMS: ${error.message}`)
-          })
+      async doSubmit() {
+        if (this.mode === 'send-sms')
+          await this.doSendSMSCode()
+        else if (this.mode === 'confirm-code')
+          await this.doSendConfirmationCode()
+      },
 
-        this.smsSent = true // hides the "Send SMS" button
+      async doSendSMSCode() {
         if (typeof window.grecaptcha === 'function')
           window.grecaptcha(window.recaptchaVerifier)
+
+        try {
+          this.smsSent = true
+
+          window.confirmationResult = await firebase.auth().signInWithPhoneNumber(this.phoneNumber, window.recaptchaVerifier)
+          this.mode = 'confirm-code'
+        }
+        catch (e) {
+          window.alert(`Could not send the SMS: ${e.message}`)
+        }
+        finally {
+          this.codeSent = false
+        }
       },
 
       async doSendConfirmationCode() {
-        this.codeSent = true
-
         try {
+          this.codeSent = true
+
           await window.confirmationResult.confirm(this.confirmationCode)
 
           // User signed in successfully.

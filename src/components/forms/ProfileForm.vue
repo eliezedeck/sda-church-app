@@ -1,0 +1,77 @@
+<template>
+  <div class="well well-sm">
+    <form @submit.prevent.stop="doSubmit">
+      <div class="form-group">
+        <label class="control-label">Full name</label>
+        <input v-model="name" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label class="control-label">Display name</label>
+        <input v-model="displayName" type="text" class="form-control" />
+      </div>
+
+      <error v-if="error">
+        <p>{{error}}</p>
+      </error>
+
+      <div class="btn-group" role="group">
+        <button :disabled="inProgress || name.length < 2 || displayName.length < 2" class="btn btn-primary" type="submit">Update</button>
+        <button @click="$emit('dismiss')" class="btn btn-default" type="button">Cancel</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+  import FApp from '../../stores/firebase.js'
+  import {SAuth} from '../../stores/auth.js'
+  import error from './error.vue'
+
+  export default {
+    name: 'ProfileForm',
+
+    beforeCreate() {
+      if (!SAuth.state.user)
+        this.$router.push('/login')
+    },
+
+    data() {
+      return {
+        error: null,
+        inProgress: false,
+
+        name: '',
+        displayName: ''
+      }
+    },
+
+    methods: {
+      async doSubmit() {
+        try {
+          this.error = null
+          this.inProgress = true
+
+          await FApp.database().ref(`/members/${SAuth.state.user.uid}`).update({
+            name: this.name,
+            displayName: this.displayName
+          })
+
+          this.$emit('dismiss')
+        }
+        catch (e) {
+          this.error = e.message
+        }
+        finally {
+          this.inProgress = false
+        }
+      }
+    },
+
+    components: {
+      error
+    }
+  }
+</script>
+
+<style>
+</style>

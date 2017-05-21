@@ -32,7 +32,7 @@
               <div class="col-md-12 text-right" style="padding: .5em 1em .5em 1em;">
                 <div>
                   <span v-if="!user">Welcome dear visitor, please <router-link to="/login">login using your Phone</router-link>.</span>
-                  <span v-else>Welcome <strong>{{user.displayName}}</strong>, <a @click.prevent="doLogout" href="#">logout</a>.</span>
+                  <span v-else>Welcome <strong>{{user.displayName}}</strong>, <a @click.prevent="doLogout" href="#">logout</a>. You can also update your <router-link to="/profile">Profile</router-link>.</span>
                 </div>
               </div>
             </div>
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div id="contents">
+    <div id="contents" style="min-height: 38em;">
       <router-view></router-view>
     </div>
 

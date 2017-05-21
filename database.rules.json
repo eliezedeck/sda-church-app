@@ -1,6 +1,12 @@
 {
   "rules": {
     ".read": "auth != null",
-    ".write": "auth != null"
+    "members": {
+      "$member_uid": {
+        // All members can see each other's info
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $member_uid"
+      }
+    }
   }
 }
