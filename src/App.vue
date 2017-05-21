@@ -71,7 +71,7 @@
             </div>
             <div class="col-md-12 col-sm-4 item social"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a></div>
           </div>
-          <p class="copyright">English Speaking Church of ANTANANARIVO © 2017 -- An application by <a href="http://www.eliezedeck.com" target="_blank">ElieZedeck.com </a></p>
+          <p class="copyright">English Speaking Church of ANTANANARIVO © 2017 &mdash; An application by <a href="http://www.eliezedeck.com" target="_blank">ElieZedeck.com </a></p>
         </div>
       </footer>
     </div>
