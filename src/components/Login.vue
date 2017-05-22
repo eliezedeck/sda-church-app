@@ -56,6 +56,15 @@
       }
     },
 
+    watch: {
+      user: function (val) { //
+        if (val) {
+          console.log('User has become logged-in! Redirecting to /')
+          this.$router.replace('/')
+        }
+      }
+    },
+
     beforeCreate() {
       if (SAuth.state.user) {
         console.log('User is already logged-in! Redirecting to /')

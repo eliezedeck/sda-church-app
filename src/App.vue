@@ -31,8 +31,8 @@
             <div class="row">
               <div class="col-md-12 text-right" style="padding: .5em 1em .5em 1em;">
                 <div>
-                  <span v-if="!user">Welcome dear visitor, please <router-link to="/login">login using your Phone</router-link>.</span>
-                  <span v-else>Welcome <strong>{{user.displayName}}</strong>, <a @click.prevent="doLogout" href="#">logout</a>. You can also update your <router-link to="/profile">Profile</router-link>.</span>
+                  <span v-if="!user">Welcome dear {{memberDisplayName}}, please <router-link to="/login">login using your Phone</router-link>.</span>
+                  <span v-else>Welcome <strong>{{memberDisplayName}}</strong>, <a @click.prevent="doLogout" href="#">logout</a>. You can also update your <router-link to="/profile">Profile</router-link>.</span>
                 </div>
               </div>
             </div>
@@ -87,6 +87,10 @@
     name: 'App',
 
     computed: {
+      memberDisplayName() {
+        return SAuth.getters.displayName
+      },
+
       user() {
         return SAuth.state.user
       }

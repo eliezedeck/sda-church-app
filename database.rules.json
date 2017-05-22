@@ -1,10 +1,10 @@
 {
   "rules": {
-    ".read": "auth != null",
     "members": {
       "$member_uid": {
-        // All members can see each other's info
+        // Authenticated members can see each other
         ".read": "auth != null",
+        // Only the member is able to update his/her profile
         ".write": "auth != null && auth.uid === $member_uid"
       }
     }

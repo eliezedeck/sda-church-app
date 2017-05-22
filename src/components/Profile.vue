@@ -4,28 +4,30 @@
       <div class="col-md-12">
         <h1>Your profile </h1></div>
       <div class="col-md-6">
-        <div v-show="showProfileForm">
-          <profile-form @dismiss="showProfileForm = false"></profile-form>
+        <div v-if="showProfileForm">
+          <profile-form
+              :member="member"
+              @dismiss="showProfileForm = false"></profile-form>
         </div>
 
         <div v-show="!showProfileForm">
           <div role="group" class="btn-group" style="margin-bottom: 1em">
             <button @click="showProfileForm = true" class="btn btn-success" type="button"><i class="glyphicon glyphicon-pencil"></i> Update your profile</button>
           </div>
-          <div class="table-responsive">
+          <div v-if="member" class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
               <tbody>
               <tr>
-                <td>Name </td>
-                <td>sdfze </td>
+                <td>Name</td>
+                <td>{{member.name}}</td>
               </tr>
               <tr>
                 <td>Display name</td>
-                <td>Cell 4</td>
+                <td>{{member.displayName}}</td>
               </tr>
               <tr>
                 <td>Phone number</td>
-                <td>Cell 2</td>
+                <td>{{user.phoneNumber}}</td>
               </tr>
               </tbody>
             </table>
@@ -55,7 +57,13 @@
     },
 
     computed: {
+      member() {
+        return SAuth.state.memberProfile
+      },
 
+      user() {
+        return SAuth.state.user
+      }
     },
 
     components: {

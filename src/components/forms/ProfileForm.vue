@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import FApp from '../../stores/firebase.js'
   import {SAuth} from '../../stores/auth.js'
   import error from './error.vue'
@@ -30,19 +31,28 @@
   export default {
     name: 'ProfileForm',
 
+    props: {
+      member: {
+        type: Object
+      }
+    },
+
     beforeCreate() {
       if (!SAuth.state.user)
-        this.$router.push('/login')
+        SAuth.commit('ASK_TO_LOGIN', {redirectPath: this.$route.path})
     },
 
     data() {
-      return {
+      let state = {
         error: null,
         inProgress: false,
 
         name: '',
         displayName: ''
       }
+
+      _.assign(state, this.member)
+      return state
     },
 
     methods: {

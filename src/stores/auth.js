@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import FApp from './firebase'
+import {vm} from '../main.js'
 
 
 Vue.use(Vuex)
@@ -8,7 +9,8 @@ Vue.use(Vuex)
 export const SAuth = new Vuex.Store({
   state: {
     user: null,
-    memberProfile: null
+    memberProfile: null,
+    redirectPath: ''
   },
 
   getters: {
@@ -30,6 +32,13 @@ export const SAuth = new Vuex.Store({
           displayName: user.phoneNumber,
           phoneNumber: user.phoneNumber
         }
+
+        // Redirect ...
+        if (state.redirectPath) {
+          const path = state.redirectPath
+          state.redirectPath = '' // clear the redirectPath right before redirecting
+          vm.$router.replace(path)
+        }
       } else {
         state.user = user
       }
@@ -37,6 +46,16 @@ export const SAuth = new Vuex.Store({
 
     UPDATE_MEMBER_PROFILE(state, {member}) {
       state.memberProfile = member
+    },
+
+    ASK_TO_LOGIN(state, {redirectPath}) {
+      if (state.user) {
+        // Already logged-in
+        state.redirectPath = ''
+        return
+      }
+
+      state.redirectPath = redirectPath
     }
   }
 })
@@ -56,7 +75,6 @@ FApp.auth().onAuthStateChanged((user) => {
   memberProfileRefURI.on('value', (snapshot) => {
     if (snapshot.exists()) {
       SAuth.commit('UPDATE_MEMBER_PROFILE', {member: snapshot.val()})
-      console.log(snapshot.val())
     } else {
       SAuth.commit('UPDATE_MEMBER_PROFILE', {member: null})
     }
