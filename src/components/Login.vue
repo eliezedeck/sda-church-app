@@ -19,7 +19,7 @@
             <div v-if="mode === 'send-sms'" id="recaptchaContainer" style="margin-bottom: 1em"></div>
 
             <div v-if="mode === 'send-sms'" role="group" class="btn-group">
-              <button @click.prevent="doSendSMSCode" :disabled="!phoneNumber || phoneNumber.length < 6 || smsSent" class="btn btn-primary" type="submit">Send SMS code</button>
+              <button @click.prevent="doSendSMSCode" :disabled="!phoneNumber || phoneNumber.length < 13 || smsSent" class="btn btn-primary" type="submit">Send SMS code</button>
             </div>
             <div v-if="mode === 'confirm-code'" role="group" class="btn-group">
               <button @click.prevent="doBackToSendSMS" class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import firebase from 'firebase'
   import {SAuth} from '../stores/auth'
 
@@ -84,14 +85,18 @@
           await this.doSendConfirmationCode()
       },
 
-      async doSendSMSCode() {
+      async doSendSMSCode() { //
         if (typeof window.grecaptcha === 'function')
           window.grecaptcha(window.recaptchaVerifier)
 
         try {
           this.smsSent = true
 
+          // Send actual SMS, with recaptcha
           window.confirmationResult = await firebase.auth().signInWithPhoneNumber(this.phoneNumber, window.recaptchaVerifier)
+
+          // Recaptcha has to be cleared before transitioning into the next state, or it will try to persist itself
+          window.recaptchaVerifier.clear()
           this.mode = 'confirm-code'
         }
         catch (e) {
