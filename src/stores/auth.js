@@ -67,16 +67,21 @@ let memberProfileRefURI = null
 FApp.auth().onAuthStateChanged((user) => {
   SAuth.commit('UPDATE_FIREBASE_USER', {user})
 
-  if (memberProfileRefURI)
+  if (memberProfileRefURI) {
     memberProfileRefURI.off()
-  memberProfileRefURI = FApp.database().ref(`/members/${user.uid}`)
+    memberProfileRefURI = null
+  }
 
-  // Watch changes on the /members/$uid
-  memberProfileRefURI.on('value', (snapshot) => {
-    if (snapshot.exists()) {
-      SAuth.commit('UPDATE_MEMBER_PROFILE', {member: snapshot.val()})
-    } else {
-      SAuth.commit('UPDATE_MEMBER_PROFILE', {member: null})
-    }
-  })
+  if (user) {
+    memberProfileRefURI = FApp.database().ref(`/members/${user.uid}`)
+
+    // Watch changes on the /members/$uid
+    memberProfileRefURI.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        SAuth.commit('UPDATE_MEMBER_PROFILE', {member: snapshot.val()})
+      } else {
+        SAuth.commit('UPDATE_MEMBER_PROFILE', {member: null})
+      }
+    })
+  }
 })
