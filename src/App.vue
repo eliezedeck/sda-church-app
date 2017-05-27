@@ -1,5 +1,11 @@
 <template>
-  <div id="app">
+  <div v-if="!userInitialized">
+    <h1 class="text-center" style="margin-top: 3em">
+      <i class="glyphicon glyphicon-refresh glyphicon-loading-animate"></i>&nbsp;&nbsp;Synchronizing with the server ...
+    </h1>
+  </div>
+
+  <div v-else="" id="app">
     <div>
       <nav class="navbar navbar-inverse navbar-fixed-top navigation-clean">
         <div class="container">
@@ -91,6 +97,10 @@
         return SAuth.getters.displayName
       },
 
+      userInitialized() {
+        return SAuth.state.userInitialized
+      },
+
       user() {
         return SAuth.state.user
       }
@@ -106,10 +116,6 @@
 </script>
 
 <style>
-  div.container {
-    padding-bottom: 1em;
-  }
-
   p.help-block {
     font-size: 80%;
   }

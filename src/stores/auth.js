@@ -8,6 +8,7 @@ Vue.use(Vuex)
 
 export const SAuth = new Vuex.Store({
   state: {
+    userInitialized: false,
     user: null,
     memberProfile: null,
     redirectPath: ''
@@ -26,7 +27,10 @@ export const SAuth = new Vuex.Store({
 
   mutations: {
     UPDATE_FIREBASE_USER(state, {user}) {
+      console.log('User has been initialized ...')
+      state.userInitialized = true
       if (user) {
+        console.log('Good user')
         state.user = {
           uid: user.uid,
           displayName: user.phoneNumber,
@@ -40,6 +44,7 @@ export const SAuth = new Vuex.Store({
           vm.$router.replace(path)
         }
       } else {
+        console.log('Empty user')
         state.user = user
       }
     },
