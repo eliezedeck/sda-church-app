@@ -2,10 +2,18 @@
   "rules": {
     "members": {
       "$member_uid": {
-        // Authenticated members can see each other
         ".read": "auth != null",
+
         // Only the member is able to update his/her profile
         ".write": "auth != null && auth.uid === $member_uid"
+      }
+    },
+
+    "prayers": {
+      "$prayer_id": {
+        ".read": "auth != null",
+
+        ".write": "auth != null"
       }
     }
   }

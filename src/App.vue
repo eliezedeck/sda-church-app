@@ -9,7 +9,7 @@
           <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
               <li role="presentation" class="active"><a href="#">Announcements</a></li>
-              <li role="presentation"><a href="#">Prayers</a></li>
+              <li role="presentation"><router-link to="/prayers">Prayers</router-link></li>
               <li role="presentation"><a href="#">Votes </a></li>
               <li class="dropdown"><a data-toggle="dropdown" aria-expanded="false" href="#" class="dropdown-toggle">Departments <span class="caret"></span></a>
                 <ul role="menu" class="dropdown-menu">
@@ -106,4 +106,11 @@
 </script>
 
 <style>
+  div.container {
+    padding-bottom: 1em;
+  }
+
+  p.help-block {
+    font-size: 80%;
+  }
 </style>
