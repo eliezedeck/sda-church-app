@@ -79,6 +79,7 @@
     data() {
       return {
         showPrayerRequestForm: false,
+        incrementViewsTimer: null
       }
     },
 
@@ -134,7 +135,14 @@
         // Increment the views
         const currentViews = _.get(this.selectedPrayer, ['views', SAuth.state.user.uid], 0)
         const update = {}; update[SAuth.state.user.uid] = currentViews + 1
-        FApp.database().ref(`/prayers/${prayer.id}/views`).update(update)
+
+        if (this.incrementViewsTimer)
+          window.clearTimeout(this.incrementViewsTimer)
+        this.incrementViewsTimer = window.setTimeout(() => {
+          FApp.database().ref(`/prayers/${prayer.id}/views`).update(update)
+          this.incrementViewsTimer = null // done, clear
+          console.log(`Views for prayer request ${this.selectedPrayer.id} incremented`)
+        }, 15000)
       },
 
       onDeleteSelectedPrayer() {
