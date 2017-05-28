@@ -2,7 +2,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1>Prayers </h1></div>
+        <h1>Prayers ({{prayers.length}})</h1>
+      </div>
       <div class="col-md-5">
         <div v-if="!showPrayerRequestForm" role="group" class="btn-group" style="margin-bottom: 1em">
           <button
@@ -83,14 +84,27 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
+  import {SPrayers} from '../stores/prayers.js'
 
   export default {
     name: 'Prayers',
 
     data() {
       return {
+        _,
         showPrayerRequestForm: false,
+      }
+    },
+
+    beforeCreate() {
+      SPrayers.fdi()
+    },
+
+    computed: {
+      prayers() {
+        return SPrayers.state.prayers
       }
     },
 
@@ -100,6 +114,8 @@
   }
 </script>
 
-<style>
-
+<style scoped>
+  div.container {
+    padding-bottom: 1em;
+  }
 </style>

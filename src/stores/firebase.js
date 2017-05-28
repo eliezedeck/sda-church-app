@@ -13,3 +13,13 @@ const app = firebase.initializeApp({
 
 
 export default app
+
+export function snapshotListToArray(snapshot) {
+  let list = []
+  snapshot.forEach((csnap) => {
+    let entry = csnap.val()
+    entry.id = csnap.key
+    list.push(entry)
+  })
+  return list
+}

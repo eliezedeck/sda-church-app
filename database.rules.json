@@ -10,9 +10,11 @@
     },
 
     "prayers": {
-      "$prayer_id": {
-        ".read": "auth != null",
+      // List of prayers
+      ".read": "auth != null",
 
+      "$prayer_id": {
+        // New prayer
         ".write": "auth != null"
       }
     }
