@@ -9,9 +9,7 @@
       </thead>
       <tbody>
       <tr v-for="prayer in prayers">
-        <td class="clipped">
-          {{prayer.content}}
-        </td>
+        <td class="clipped" v-html="prayer.contentMarked"></td>
         <td>...</td>
       </tr>
       </tbody>

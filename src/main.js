@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import marked from 'marked'
 
 // Initialize stores in correct order
 import './stores/firebase'
@@ -10,6 +11,15 @@ import './stores/auth'
 
 
 Vue.config.productionTip = false
+
+// Default marked options
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  sanitize: true,
+  smartLists: true
+})
+
 
 export const vm = new Vue({
   el: '#app',

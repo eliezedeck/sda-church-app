@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import FApp, {snapshotListToArray} from './firebase'
 import {vm} from '../main.js'
+import marked from 'marked'
 
 
 Vue.use(Vuex)
@@ -26,6 +27,13 @@ export const SPrayers = new Vuex.Store({
 SPrayers.fdi = _.once(() => {
   console.log('Starting /prayers ...')
   FApp.database().ref('/prayers').on('value', function (snapshot) {
-    SPrayers.commit('UPDATE_PRAYERS_LIST', {array: snapshotListToArray(snapshot)})
+    let list = snapshotListToArray(snapshot)
+
+    // Add markedown-rendered content
+    _.forEach(list, p => {
+      p.contentMarked = marked(p.content)
+    })
+
+    SPrayers.commit('UPDATE_PRAYERS_LIST', {array: list})
   })
 })

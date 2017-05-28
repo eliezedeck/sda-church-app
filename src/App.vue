@@ -128,4 +128,9 @@
   p.help-block {
     font-size: 80%;
   }
+
+  /* For markdown paragraphs */
+  p:last-child {
+    margin-bottom: 0;
+  }
 </style>
