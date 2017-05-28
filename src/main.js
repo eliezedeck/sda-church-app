@@ -10,9 +10,10 @@ import './stores/firebase'
 import './stores/auth'
 
 // Global components
-import Loading from './components/widgets/Loading.vue'
+import './components/widgets/register.js'
 
-Vue.component('loading', Loading)
+// Global filters
+import './filters'
 
 
 Vue.config.productionTip = false

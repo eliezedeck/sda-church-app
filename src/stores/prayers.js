@@ -11,14 +11,25 @@ Vue.use(Vuex)
 export const SPrayers = new Vuex.Store({
   state: {
     initialized: false,
-    prayers: []
+    prayers: [],
+    lookup: {}
+  },
+
+  getters: {
+    selected: (state) => (id) => {
+      if (id) {
+        return state.lookup[id]
+      }
+      return null
+    }
   },
 
   mutations: {
-    UPDATE_PRAYERS_LIST(state, {array}) {
+    UPDATE_PRAYERS_LIST(state, {array, lookup}) {
       state.initialized = true
       if (array) {
         state.prayers = array
+        state.lookup = lookup
       }
     }
   }
@@ -30,12 +41,17 @@ SPrayers.fdi = _.once(() => {
   console.log('Starting /prayers ...')
   FApp.database().ref('/prayers').on('value', function (snapshot) {
     let list = snapshotListToArray(snapshot)
+    let lookup = {}
 
     // Add markedown-rendered content
     _.forEach(list, p => {
       p.contentMarked = marked(p.content)
+      lookup[p.id] = p
     })
 
-    SPrayers.commit('UPDATE_PRAYERS_LIST', {array: list})
+    SPrayers.commit('UPDATE_PRAYERS_LIST', {
+      array: list,
+      lookup: lookup
+    })
   })
 })

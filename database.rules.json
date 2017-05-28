@@ -1,6 +1,9 @@
 {
   "rules": {
     "members": {
+      // List of members
+      ".read": "auth != null",
+
       "$member_uid": {
         ".read": "auth != null",
 

@@ -16,13 +16,17 @@
             @dismiss="showPrayerRequestForm = false"></prayer-request-form>
         <prayers-list
             @selected="onPrayerSelected"
-            :selected="selectedPrayerId"
+            :selected="selectedPrayer ? selectedPrayer.id : ''"
             :prayersInitialized="prayersInitialized"
             :prayers="prayers"></prayers-list>
       </div>
-      <div class="col-md-7">
-        <h4>Request by ... - <small>Text</small></h4>
-        <p>Details and Contents of the request</p>
+      <div v-if="selectedPrayer" class="col-md-7">
+        <h4>
+          <span v-if="selectedPrayerPoster">Request by <strong><member-span :member="selectedPrayerPoster"></member-span></strong></span>
+          <span v-else="">Anonymous prayer request</span>
+          &mdash; <small>{{selectedPrayer.createdAt | ts2date}}</small>
+        </h4>
+        <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
         <hr />
         <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
         <div role="group"
@@ -70,7 +74,8 @@
 <script>
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
-  import {SPrayers} from '../stores/prayers.js'
+  import {SPrayers} from '../stores/prayers'
+  import {SMembers} from '../stores/members'
 
   export default {
     name: 'Prayers',
@@ -83,11 +88,20 @@
 
     beforeCreate() {
       SPrayers.fdi()
+      SMembers.fdi()
     },
 
     computed: {
-      selectedPrayerId() {
-        return this.$route.params.id
+      selectedPrayer() {
+        return SPrayers.getters.selected(this.$route.params.id)
+      },
+
+      selectedPrayerPoster() {
+        const prayer = this.selectedPrayer
+        if (prayer) {
+          return SMembers.getters.selected(prayer.poster)
+        }
+        return ''
       },
 
       prayersInitialized() {
