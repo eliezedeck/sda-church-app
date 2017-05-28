@@ -7,12 +7,13 @@
       <div class="col-md-5">
         <div v-if="!showPrayerRequestForm" role="group" class="btn-group" style="margin-bottom: 1em">
           <button
-              @click="showPrayerRequestForm = true"
+              @click="$router.push('/prayers'); showPrayerRequestForm = true"
               class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
           <button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove </button>
         </div>
 
         <prayer-request-form v-else=""
+            :prayer="selectedPrayer"
             @dismiss="showPrayerRequestForm = false"></prayer-request-form>
         <prayers-list
             @selected="onPrayerSelected"
@@ -22,7 +23,9 @@
       </div>
       <div v-if="selectedPrayer" class="col-md-7">
         <h4>
-          <span v-if="selectedPrayerBelongsToUser"><button class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button> &mdash; Your request</span>
+          <span v-if="selectedPrayerBelongsToUser"><button
+              @click="showPrayerRequestForm = true"
+              class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button> &mdash; Your request</span>
           <span v-if="!selectedPrayerBelongsToUser && selectedPrayerPoster">Request by <strong><member-span :member="selectedPrayerPoster"></member-span></strong></span>
           <span v-if="!selectedPrayerPoster">Anonymous prayer request</span>
           &mdash; <small>{{selectedPrayer.createdAt | ts2date}}</small>
@@ -125,6 +128,7 @@
 
     methods: {
       onPrayerSelected(prayer) {
+        this.showPrayerRequestForm = false
         this.$router.push(`/prayers/${prayer.id}`)
       }
     },

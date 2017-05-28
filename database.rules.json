@@ -8,7 +8,7 @@
         ".read": "auth != null",
 
         // Only the member is able to update his/her profile
-        ".write": "auth != null && auth.uid === $member_uid"
+        ".write": "auth != null && auth.uid == $member_uid"
       }
     },
 
@@ -17,8 +17,9 @@
       ".read": "auth != null",
 
       "$prayer_id": {
-        // New prayer
-        ".write": "auth != null"
+        // New prayer: any authenticated users
+        // Edit a prayer: only the owner
+        ".write": "auth != null && (data.exists() && data.child('poster').val() == auth.uid)"
       }
     }
   }
