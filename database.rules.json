@@ -18,8 +18,8 @@
 
       "$prayer_id": {
         // New prayer: any authenticated users
-        // Edit a prayer: only the owner
-        ".write": "auth != null && (data.exists() && data.child('poster').val() == auth.uid)"
+        // Delete / Edit a prayer: only the owner
+        ".write": "auth != null && (!data.exists() || (data.exists() && data.child('poster').val() == auth.uid))"
       }
     }
   }
