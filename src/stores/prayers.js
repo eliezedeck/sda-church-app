@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import FApp, {snapshotListToArray} from './firebase'
+import FApp from './firebase'
 import {vm} from '../main.js'
 import marked from 'marked'
 
@@ -25,10 +25,10 @@ export const SPrayers = new Vuex.Store({
   },
 
   mutations: {
-    UPDATE_PRAYERS_LIST(state, {array, lookup}) {
+    UPDATE_PRAYERS_LIST(state, {list, lookup}) {
       state.initialized = true
-      if (array) {
-        state.prayers = array
+      if (list) {
+        state.prayers = list
         state.lookup = lookup
       }
     }
@@ -40,18 +40,18 @@ export const SPrayers = new Vuex.Store({
 SPrayers.fdi = _.once(() => {
   console.log('Starting /prayers ...')
   FApp.database().ref('/prayers').on('value', function (snapshot) {
-    let list = snapshotListToArray(snapshot)
+    let list = []
     let lookup = {}
 
-    // Add markedown-rendered content
-    _.forEach(list, p => {
+    _.forEach(snapshot.val(), (p, k) => {
+      p.id = k
+      // Add markedown-rendered content
       p.contentMarked = marked(p.content)
+
+      list.push(p)
       lookup[p.id] = p
     })
 
-    SPrayers.commit('UPDATE_PRAYERS_LIST', {
-      array: list,
-      lookup: lookup
-    })
+    SPrayers.commit('UPDATE_PRAYERS_LIST', {list, lookup})
   })
 })

@@ -14,12 +14,20 @@ const app = firebase.initializeApp({
 
 export default app
 
-export function snapshotListToArray(snapshot) {
-  let list = []
+export function snapshotListToArrayAndLookup(snapshot) {
+  let array = []
+  let lookup = {}
+
   snapshot.forEach((csnap) => {
     let entry = csnap.val()
     entry.id = csnap.key
-    list.push(entry)
+
+    array.push(entry)
+    lookup[csnap.key] = entry
   })
-  return list
+
+  return {
+    array,
+    lookup
+  }
 }

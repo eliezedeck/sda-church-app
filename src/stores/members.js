@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import FApp, {snapshotListToArray} from './firebase'
+import FApp, {snapshotListToArrayAndLookup} from './firebase'
 
 
 Vue.use(Vuex)
@@ -38,9 +38,6 @@ export const SMembers = new Vuex.Store({
 SMembers.fdi = _.once(() => {
   console.log('Starting /members ...')
   FApp.database().ref('/members').on('value', function (snapshot) {
-    SMembers.commit('UPDATE_MEMBERS_LIST', {
-      array: snapshotListToArray(snapshot),
-      lookup: snapshot.val()
-    })
+    SMembers.commit('UPDATE_MEMBERS_LIST', snapshotListToArrayAndLookup(snapshot))
   })
 })
