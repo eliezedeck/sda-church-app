@@ -133,4 +133,8 @@
   p:last-child {
     margin-bottom: 0;
   }
+
+  tr.active > td {
+    background-color: rgba(200, 200, 200, 0.5) !important;
+  }
 </style>

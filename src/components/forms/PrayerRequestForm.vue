@@ -13,7 +13,7 @@
         <label>
           <input
               v-model="anonymous"
-              type="checkbox" />Do not display my name (anonymous)</label>
+              type="checkbox" />Do not display my name (<em>anonymous</em>, editing will be impossible)</label>
       </div>
       <div role="group" class="btn-group">
         <button class="btn btn-primary" type="submit">Add my Prayer Request</button>

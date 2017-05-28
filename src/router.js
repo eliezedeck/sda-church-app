@@ -12,25 +12,26 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Index',
       component: Index
     },
 
     {
       path: '/login',
-      name: 'Login',
       component: Login
     },
 
     {
       path: '/profile',
-      name: 'Profile',
       component: Profile
     },
 
     {
       path: '/prayers',
-      name: 'Prayers',
+      component: Prayers
+    },
+
+    {
+      path: '/prayers/:id',
       component: Prayers
     },
   ]

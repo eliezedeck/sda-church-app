@@ -14,7 +14,10 @@
 
         <prayer-request-form v-else=""
             @dismiss="showPrayerRequestForm = false"></prayer-request-form>
-        <prayers-list :prayers="prayers"></prayers-list>
+        <prayers-list
+            @selected="onPrayerSelected"
+            :selected="selectedPrayerId"
+            :prayers="prayers"></prayers-list>
       </div>
       <div class="col-md-7">
         <h4>Request by ... - <small>Text</small></h4>
@@ -64,7 +67,6 @@
 </template>
 
 <script>
-  import _ from 'lodash'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
   import {SPrayers} from '../stores/prayers.js'
@@ -74,7 +76,6 @@
 
     data() {
       return {
-        _,
         showPrayerRequestForm: false,
       }
     },
@@ -84,8 +85,18 @@
     },
 
     computed: {
+      selectedPrayerId() {
+        return this.$route.params.id
+      },
+
       prayers() {
         return SPrayers.state.prayers
+      }
+    },
+
+    methods: {
+      onPrayerSelected(prayer) {
+        this.$router.push(`/prayers/${prayer.id}`)
       }
     },
 
