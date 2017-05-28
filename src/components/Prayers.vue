@@ -17,6 +17,7 @@
         <prayers-list
             @selected="onPrayerSelected"
             :selected="selectedPrayerId"
+            :prayersInitialized="prayersInitialized"
             :prayers="prayers"></prayers-list>
       </div>
       <div class="col-md-7">
@@ -87,6 +88,10 @@
     computed: {
       selectedPrayerId() {
         return this.$route.params.id
+      },
+
+      prayersInitialized() {
+        return SPrayers.state.initialized
       },
 
       prayers() {

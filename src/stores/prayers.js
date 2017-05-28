@@ -10,11 +10,13 @@ Vue.use(Vuex)
 
 export const SPrayers = new Vuex.Store({
   state: {
+    initialized: false,
     prayers: []
   },
 
   mutations: {
     UPDATE_PRAYERS_LIST(state, {array}) {
+      state.initialized = true
       if (array) {
         state.prayers = array
       }

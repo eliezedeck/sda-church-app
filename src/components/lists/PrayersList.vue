@@ -8,7 +8,15 @@
       </tr>
       </thead>
 
-      <tbody>
+      <tbody v-if="!prayersInitialized">
+      <tr>
+        <td colspan="100">
+          <loading></loading>
+        </td>
+      </tr>
+      </tbody>
+
+      <tbody v-else="">
       <tr
           v-for="prayer in prayers"
           @click="$emit('selected', prayer)" :class="{active: selected === prayer.id}">
@@ -25,6 +33,11 @@
     name: 'PrayersList',
 
     props: {
+      prayersInitialized: {
+        type: Boolean,
+        default: false
+      },
+
       prayers: {
         type: Array,
         required: true
