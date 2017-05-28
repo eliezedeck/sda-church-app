@@ -9,6 +9,11 @@ import marked from 'marked'
 import './stores/firebase'
 import './stores/auth'
 
+// Global components
+import Loading from './components/widgets/Loading.vue'
+
+Vue.component('loading', Loading)
+
 
 Vue.config.productionTip = false
 
@@ -25,5 +30,5 @@ export const vm = new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App }
+  components: {App}
 })
