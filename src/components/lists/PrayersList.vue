@@ -19,7 +19,7 @@
       <tbody v-else="">
       <tr
           v-for="prayer in prayers"
-          @click="$emit('selected', prayer)" :class="{active: selected === prayer.id}">
+          @click="$emit('selected', prayer)" :class="{active: selected === prayer.id, success: prayer.answeredAt}">
         <td class="clipped" v-html="prayer.contentMarked"></td>
         <td class="text-right">{{getPrayerViewsCount(prayer)}}</td>
       </tr>

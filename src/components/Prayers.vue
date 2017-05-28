@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1>Prayers ({{prayers.length}})</h1>
+        <h1>Prayer Requests ({{prayers.length}})</h1>
       </div>
       <div class="col-md-5">
         <div v-if="!showPrayerRequestForm" role="group" class="btn-group" style="margin-bottom: 1em">
@@ -39,7 +39,9 @@
         <div role="group"
              class="btn-group" style="margin-bottom: 1em">
           <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments </button>
-          <button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
+          <button v-if="selectedPrayerBelongsToUser && !selectedPrayer.answeredAt"
+              @click="whenGodAnswersThePrayer"
+              class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
         </div>
         <div class="well well-sm">
           <form>
@@ -67,6 +69,7 @@
   import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
+  import firebase from 'firebase'
   import FApp from '../stores/firebase.js'
   import {confirm} from './bootstrap-modal-dialog.js'
 
@@ -136,9 +139,14 @@
 
       onDeleteSelectedPrayer() {
         confirm('Are you sure?', '<p>Once deleted, your request will be unrecoverable.</p>', () => {
-          const prayer = this.selectedPrayer
-          FApp.database().ref(`/prayers/${prayer.id}`).remove()
+          FApp.database().ref(`/prayers/${this.selectedPrayer.id}`).remove()
           this.$router.replace('/prayers')
+        })
+      },
+
+      whenGodAnswersThePrayer() {
+        confirm('Not by accident?', '<p>That is a great thing, but we just want to make sure you did not accidentally touched the button.</p><p>Other members will not be praying for this request anymore after this.</p>', () => {
+          FApp.database().ref(`/prayers/${this.selectedPrayer.id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
         })
       }
     },

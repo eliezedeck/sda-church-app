@@ -7,21 +7,13 @@ export function confirm(title, body, onConfirm, onDismiss) {
   $(`${confirmSelector} .modal-title`).html(title)
   $(`${confirmSelector} .modal-body`).html(body)
 
-  // Create a "once" version of the callbacks
-  if (typeof onConfirm === 'function') {
-  	onConfirm = _.once(onConfirm)
-  }
-  if (typeof onDismiss === 'function') {
-  	onDismiss = _.once(onDismiss)
-  }
-
   // Confirm
-  $(`${confirmSelector} .modal-footer button.btn-danger`).on('click', (event) => {
+  $(`${confirmSelector} .modal-footer button.btn-primary`).on('click', (event) => {
     event.preventDefault()
     event.stopPropagation()
 
-    $(`${confirmSelector} .modal-footer button.btn-danger`).off('click')
-    $(confirmSelector).unbind('hide.bs.modal')
+    $(`${confirmSelector} .modal-footer button.btn-primary`).off('click')
+    $(confirmSelector).off('hide.bs.modal')
     if (typeof onConfirm === 'function') {
       onConfirm()
     }
@@ -30,7 +22,7 @@ export function confirm(title, body, onConfirm, onDismiss) {
 
   // Dismiss / Cancel
   $(confirmSelector).on('hide.bs.modal', () => {
-    $(confirmSelector).unbind('hide.bs.modal')
+    $(confirmSelector).off('hide.bs.modal')
     if (typeof onDismiss === 'function') {
     	onDismiss()
     }
