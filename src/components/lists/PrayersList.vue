@@ -21,7 +21,7 @@
           v-for="prayer in prayers"
           @click="$emit('selected', prayer)" :class="{active: selected === prayer.id}">
         <td class="clipped" v-html="prayer.contentMarked"></td>
-        <td class="text-right">...</td>
+        <td class="text-right">{{getPrayerViewsCount(prayer)}}</td>
       </tr>
       </tbody>
     </table>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+  import _ from 'lodash'
+
   export default {
     name: 'PrayersList',
 
@@ -45,6 +47,16 @@
 
       selected: {
         type: String
+      }
+    },
+
+    methods: {
+      getPrayerViewsCount(prayer) {
+        let count = 0
+        _.forEach(prayer.views, (v) => {
+          count += v
+        })
+        return count
       }
     }
   }

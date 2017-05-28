@@ -1,26 +1,30 @@
 {
   "rules": {
     "members": {
-      // List of members
-      ".read": "auth != null",
-
       "$member_uid": {
         ".read": "auth != null",
 
         // Only the member is able to update his/her profile
         ".write": "auth != null && auth.uid == $member_uid"
-      }
+      },
+
+      // List of members
+      ".read": "auth != null"
     },
 
     "prayers": {
-      // List of prayers
-      ".read": "auth != null",
-
       "$prayer_id": {
+        "views": {
+          ".write": "auth != null"
+        },
+
         // New prayer: any authenticated users
         // Delete / Edit a prayer: only the owner
         ".write": "auth != null && (!data.exists() || (data.exists() && data.child('poster').val() == auth.uid))"
-      }
+      },
+
+      // List of prayers
+      ".read": "auth != null",
     }
   }
 }

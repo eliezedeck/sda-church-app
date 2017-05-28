@@ -61,6 +61,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
   import {SAuth} from '../stores/auth.js'
@@ -115,8 +116,17 @@
 
     methods: {
       onPrayerSelected(prayer) {
+        if (this.selectedPrayer && this.selectedPrayer.id === prayer.id)
+        // Already selected
+          return
+
         this.showPrayerRequestForm = false
         this.$router.push(`/prayers/${prayer.id}`)
+
+        // Increment the views
+        const currentViews = _.get(this.selectedPrayer, ['views', SAuth.state.user.uid], 0)
+        const update = {}; update[SAuth.state.user.uid] = currentViews + 1
+        FApp.database().ref(`/prayers/${prayer.id}/views`).update(update)
       },
 
       onDeleteSelectedPrayer() {
