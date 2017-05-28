@@ -153,4 +153,8 @@
   tr.active > td {
     background-color: rgba(200, 200, 200, 0.5) !important;
   }
+
+  tr.active.success > td {
+    background-color: rgba(112, 200, 98, 0.5) !important;
+  }
 </style>
