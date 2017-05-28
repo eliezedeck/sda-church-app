@@ -4,7 +4,7 @@
       <thead>
       <tr>
         <th style="width: 80%">Request list</th>
-        <th style="width: 20%">Views</th>
+        <th class="text-right" style="width: 20%">Views</th>
       </tr>
       </thead>
 
@@ -21,7 +21,7 @@
           v-for="prayer in prayers"
           @click="$emit('selected', prayer)" :class="{active: selected === prayer.id}">
         <td class="clipped" v-html="prayer.contentMarked"></td>
-        <td>...</td>
+        <td class="text-right">...</td>
       </tr>
       </tbody>
     </table>

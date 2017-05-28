@@ -1,6 +1,6 @@
 <template>
   <span>
-    {{member.displayName || member.name || member.phoneNumber}}
+    {{member ? (member.displayName || member.name || member.phoneNumber) : ''}}
   </span>
 </template>
 

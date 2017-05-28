@@ -22,8 +22,9 @@
       </div>
       <div v-if="selectedPrayer" class="col-md-7">
         <h4>
-          <span v-if="selectedPrayerPoster">Request by <strong><member-span :member="selectedPrayerPoster"></member-span></strong></span>
-          <span v-else="">Anonymous prayer request</span>
+          <span v-if="selectedPrayerBelongsToUser"><button class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button> &mdash; Your request</span>
+          <span v-if="!selectedPrayerBelongsToUser && selectedPrayerPoster">Request by <strong><member-span :member="selectedPrayerPoster"></member-span></strong></span>
+          <span v-if="!selectedPrayerPoster">Anonymous prayer request</span>
           &mdash; <small>{{selectedPrayer.createdAt | ts2date}}</small>
         </h4>
         <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
@@ -74,6 +75,7 @@
 <script>
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
+  import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
 
@@ -92,6 +94,10 @@
     },
 
     computed: {
+      user() {
+        return SAuth.state.user || {}
+      },
+
       selectedPrayer() {
         return SPrayers.getters.selected(this.$route.params.id)
       },
@@ -102,6 +108,10 @@
           return SMembers.getters.selected(prayer.poster)
         }
         return ''
+      },
+
+      selectedPrayerBelongsToUser() {
+        return this.selectedPrayerPoster && this.selectedPrayerPoster.id === this.user.uid
       },
 
       prayersInitialized() {
