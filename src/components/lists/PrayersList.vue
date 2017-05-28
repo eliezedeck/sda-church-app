@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <table class="table table-condensed table-hover" style="table-layout: fixed">
       <thead>
-      <tr>
+      <tr @click="$emit('selected', null)">
         <th style="width: 80%">Request list</th>
         <th class="text-right" style="width: 20%">Views</th>
       </tr>

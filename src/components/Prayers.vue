@@ -116,6 +116,11 @@
 
     methods: {
       onPrayerSelected(prayer) {
+        if (!prayer) {
+          this.$router.push(`/prayers`)
+          return
+        }
+
         if (this.selectedPrayer && this.selectedPrayer.id === prayer.id)
         // Already selected
           return
