@@ -9,7 +9,10 @@
           <button
               @click="$router.push('/prayers'); showPrayerRequestForm = true"
               class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
-          <button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove </button>
+          <button
+              v-if="selectedPrayerBelongsToUser"
+              @click="onDeleteSelectedPrayer"
+              class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove </button>
         </div>
 
         <prayer-request-form v-else=""
@@ -36,25 +39,7 @@
         <div role="group"
              class="btn-group" style="margin-bottom: 1em">
           <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments </button>
-          <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony </button>
           <button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
-        </div>
-        <div class="well well-sm">
-          <form>
-            <div class="form-group">
-              <label class="control-label">Your testimony</label>
-              <textarea rows="6" class="form-control input-lg"></textarea>
-              <p class="help-block">Text is in &quot;Markdown&quot; notation:</p>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" />Make this Testimony also visible in the Testimonies page</label>
-            </div>
-            <div role="group" class="btn-group">
-              <button class="btn btn-primary" type="button">Add my Testimony</button>
-              <button class="btn btn-default" type="button">Cancel </button>
-            </div>
-          </form>
         </div>
         <div class="well well-sm">
           <form>
@@ -81,6 +66,8 @@
   import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
+  import FApp from '../stores/firebase.js'
+  import {confirm} from './bootstrap-modal-dialog.js'
 
   export default {
     name: 'Prayers',
@@ -130,6 +117,14 @@
       onPrayerSelected(prayer) {
         this.showPrayerRequestForm = false
         this.$router.push(`/prayers/${prayer.id}`)
+      },
+
+      onDeleteSelectedPrayer() {
+        confirm('Are you sure?', '<p>Once deleted, your request will be unrecoverable.</p>', () => {
+          const prayer = this.selectedPrayer
+          FApp.database().ref(`/prayers/${prayer.id}`).remove()
+          this.$router.replace('/prayers')
+        })
       }
     },
 
