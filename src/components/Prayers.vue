@@ -14,27 +14,7 @@
 
         <prayer-request-form v-else=""
             @dismiss="showPrayerRequestForm = false"></prayer-request-form>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-            <tr>
-              <th>Request list</th>
-              <th>Views </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Title of the prayer request</td>
-              <td>45 </td>
-            </tr>
-            <tr>
-              <td>Cell 3</td>
-              <td>45 </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <prayers-list :prayers="prayers"></prayers-list>
       </div>
       <div class="col-md-7">
         <h4>Request by ... - <small>Text</small></h4>
@@ -86,6 +66,7 @@
 <script>
   import _ from 'lodash'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
+  import PrayersList from './lists/PrayersList.vue'
   import {SPrayers} from '../stores/prayers.js'
 
   export default {
@@ -109,7 +90,8 @@
     },
 
     components: {
-      PrayerRequestForm
+      PrayerRequestForm,
+      PrayersList
     }
   }
 </script>
