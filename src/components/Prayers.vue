@@ -12,7 +12,7 @@
           <button
               v-if="selectedPrayerBelongsToUser"
               @click="onDeleteSelectedPrayer"
-              class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove </button>
+              class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
         </div>
 
         <prayer-request-form v-else=""
@@ -37,25 +37,19 @@
         <hr />
         <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
         <div role="group"
+             v-if="!showPrayerCommentsForm"
              class="btn-group" style="margin-bottom: 1em">
-          <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments </button>
+          <button
+              @click="showPrayerCommentsForm = true"
+              class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
           <button v-if="selectedPrayerBelongsToUser && !selectedPrayer.answeredAt"
               @click="whenGodAnswersThePrayer"
               class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
         </div>
-        <div class="well well-sm">
-          <form>
-            <div class="form-group">
-              <label class="control-label">Your comments</label>
-              <textarea placeholder="Encourage, give information, ..." rows="4" class="form-control"></textarea>
-              <p class="help-block">Text is in &quot;Markdown&quot; notation:</p>
-            </div>
-            <div role="group" class="btn-group">
-              <button class="btn btn-primary" type="button">Add my Comments</button>
-              <button class="btn btn-default" type="button">Cancel </button>
-            </div>
-          </form>
-        </div>
+        <prayer-request-comments-form
+            v-else=""
+            @dismiss="showPrayerCommentsForm = false"
+            :prayer="selectedPrayer"></prayer-request-comments-form>
         <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
       </div>
     </div>
@@ -66,6 +60,7 @@
   import _ from 'lodash'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
+  import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
   import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
@@ -79,7 +74,8 @@
     data() {
       return {
         showPrayerRequestForm: false,
-        incrementViewsTimer: null
+        showPrayerCommentsForm: false,
+        incrementViewsTimer: null,
       }
     },
 
@@ -163,7 +159,8 @@
 
     components: {
       PrayerRequestForm,
-      PrayersList
+      PrayersList,
+      PrayerRequestCommentsForm
     }
   }
 </script>

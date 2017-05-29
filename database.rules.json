@@ -18,6 +18,13 @@
           ".write": "auth != null"
         },
 
+        "comments": {
+          "$comments_id": {
+            ".write": "auth != null",
+            ".validate": "newData.hasChildren(['content', 'createdBy', 'createdAt']) && newData.child('createdBy').val() == auth.uid"
+          }
+        },
+
         // New prayer: any authenticated users
         // Delete / Edit a prayer: only the owner
         ".write": "auth != null && (!data.exists() || (data.exists() && data.child('poster').val() == auth.uid))"
