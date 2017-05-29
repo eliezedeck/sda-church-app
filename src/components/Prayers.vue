@@ -120,6 +120,10 @@
 
     methods: {
       onPrayerSelected(prayer) {
+        if (this.incrementViewsTimer) {
+          window.clearTimeout(this.incrementViewsTimer)
+          this.incrementViewsTimer = null
+        }
         if (!prayer) {
           this.$router.push(`/prayers`)
           return
@@ -136,8 +140,6 @@
         const currentViews = _.get(this.selectedPrayer, ['views', SAuth.state.user.uid], 0)
         const update = {}; update[SAuth.state.user.uid] = currentViews + 1
 
-        if (this.incrementViewsTimer)
-          window.clearTimeout(this.incrementViewsTimer)
         this.incrementViewsTimer = window.setTimeout(() => {
           FApp.database().ref(`/prayers/${prayer.id}/views`).update(update)
           this.incrementViewsTimer = null // done, clear
