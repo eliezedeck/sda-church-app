@@ -33,6 +33,14 @@ export const SMembers = new Vuex.Store({
   }
 })
 
+export const SMembersMixin = {
+  computed: {
+    membersLookup: () => (id) => {
+      return SMembers.state.lookup[id]
+    }
+  }
+}
+
 
 // Firebase Data Initialization
 SMembers.fdi = _.once(() => {

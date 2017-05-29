@@ -10,10 +10,7 @@
 
     props: {
       member: {
-        type: Object,
-        default: {
-          displayName: ''
-        }
+        type: Object
       }
     }
   }

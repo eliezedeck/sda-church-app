@@ -20,7 +20,10 @@
 
         "comments": {
           "$comments_id": {
-            ".write": "auth != null",
+            // New comment: any authenticated users
+            // Delete a comment: only the owner
+            ".write": "auth != null && (!data.exists() || (data.exists() && data.child('createdBy').val() == auth.uid))",
+
             ".validate": "newData.hasChildren(['content', 'createdBy', 'createdAt']) && newData.child('createdBy').val() == auth.uid"
           }
         },
@@ -31,7 +34,7 @@
       },
 
       // List of prayers
-      ".read": "auth != null",
+      ".read": "auth != null"
     }
   }
 }

@@ -36,6 +36,10 @@
         <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
         <hr />
         <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
+        <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
+
+        <hr />
+        <h5>Comments</h5>
         <div role="group"
              v-if="!showPrayerCommentsForm"
              class="btn-group" style="margin-bottom: 1em">
@@ -43,14 +47,15 @@
               @click="showPrayerCommentsForm = true"
               class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
           <button v-if="selectedPrayerBelongsToUser && !selectedPrayer.answeredAt"
-              @click="whenGodAnswersThePrayer"
-              class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
+                  @click="whenGodAnswersThePrayer"
+                  class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
         </div>
         <prayer-request-comments-form
             v-else=""
             @dismiss="showPrayerCommentsForm = false"
             :prayer="selectedPrayer"></prayer-request-comments-form>
-        <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
+        <prayer-comments-list
+            :prayer="selectedPrayer"></prayer-comments-list>
       </div>
     </div>
   </div>
@@ -61,6 +66,7 @@
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
   import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
+  import PrayerCommentsList from './lists/PrayerCommentsList.vue'
   import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
@@ -160,7 +166,8 @@
     components: {
       PrayerRequestForm,
       PrayersList,
-      PrayerRequestCommentsForm
+      PrayerRequestCommentsForm,
+      PrayerCommentsList
     }
   }
 </script>
