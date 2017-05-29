@@ -11,7 +11,6 @@ const app = firebase.initializeApp({
   messagingSenderId: "945746518532"
 })
 
-
 export default app
 
 export function snapshotListToArrayAndLookup(snapshot) {
@@ -31,3 +30,5 @@ export function snapshotListToArrayAndLookup(snapshot) {
     lookup
   }
 }
+
+export {firebase}
