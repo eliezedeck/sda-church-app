@@ -13,7 +13,7 @@ export const SMembers = createStoreWithFirebaseSubscription({
 export const SMembersMixin = {
   computed: {
     membersLookup: () => (id) => {
-      return SMembers.state.lookup[id]
+      return SMembers.state.members[id]
     }
   }
 }
