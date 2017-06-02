@@ -24,10 +24,13 @@ export {firebase}
  * Returns an instance of Vuex store, ready for Firebase list subscription to the given path
  * @param key Name of the objects on the path, like "users", "articles", etc...
  * @param path Path of the list on Firebase
- * @param getters Custom getters to inject into the store state (optional)
+ * @param getters Custom getters to inject into the store state, set to null if not needed
+ * @param mutations Custom mutations, set to null if not needed
+ * @param actions Custom actions, set to null if not needed
+ * @param lookupFunc Function that will be used to convert the spanshot to `lookup`
  * @return {Store}
  */
-export function createStoreWithFirebaseSubscription(key, path, getters) {
+export function createStoreWithFirebaseSubscription({key, path, getters, mutations, actions, lookupFunc}) {
   let state = {
     initialized: false,
     count: 0
@@ -35,18 +38,7 @@ export function createStoreWithFirebaseSubscription(key, path, getters) {
   state[key] = {} // this is the kind of "users", "articles", etc...
 
   const storeClass = {
-    state,
-
-    mutations: {
-      UPDATE_LIST(state, {lookup}) {
-        // Add an "id" to each data
-        _.forEach(lookup, (v, k) => { if (typeof v === 'object') v.id = k })
-
-        state.initialized = true
-        state[key] = lookup
-        state.count = _.size(lookup)
-      }
-    }
+    state
   }
 
   storeClass.getters = _.assign({
@@ -59,13 +51,30 @@ export function createStoreWithFirebaseSubscription(key, path, getters) {
     }
   }, getters || {})
 
+  storeClass.mutations = _.assign({
+    UPDATE_LIST(state, {lookup}) {
+      // Add an "id" to each data
+      _.forEach(lookup, (v, k) => { if (typeof v === 'object') v.id = k })
+
+      state.initialized = true
+      state[key] = lookup
+      state.count = _.size(lookup)
+    }
+  }, mutations || {})
+
+  if (actions)
+    storeClass.actions = actions
+
   const store = new Vuex.Store(storeClass)
 
   // Create an initialization function
   store.fdi = _.once(() => {
     console.log(`Starting ${path} ...`)
     app.database().ref(path).on('value', function (snapshot) {
-      store.commit('UPDATE_LIST', {lookup: snapshot.val()})
+      if (typeof lookupFunc === 'function')
+        store.commit('UPDATE_LIST', {lookup: lookupFunc(snapshot)})
+      else
+        store.commit('UPDATE_LIST', {lookup: snapshot.val()})
     })
   })
 

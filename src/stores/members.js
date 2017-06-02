@@ -5,7 +5,10 @@ import {createStoreWithFirebaseSubscription} from './firebase'
 
 Vue.use(Vuex)
 
-export const SMembers = createStoreWithFirebaseSubscription('members', '/members')
+export const SMembers = createStoreWithFirebaseSubscription({
+  key: 'members',
+  path: '/members'
+})
 
 export const SMembersMixin = {
   computed: {
