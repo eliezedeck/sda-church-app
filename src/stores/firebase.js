@@ -53,8 +53,8 @@ export function createStoreWithFirebaseSubscription({key, path, getters, mutatio
 
   storeClass.mutations = _.assign({
     UPDATE_LIST(state, {lookup}) {
-      // Add an "id" to each data
-      _.forEach(lookup, (v, k) => { if (typeof v === 'object') v.id = k })
+      // Add an "$id" to each data
+      _.forEach(lookup, (v, k) => { if (typeof v === 'object') v.$id = k })
 
       state.initialized = true
       state[key] = lookup

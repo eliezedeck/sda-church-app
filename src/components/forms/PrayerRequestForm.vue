@@ -66,11 +66,11 @@
 
         if (this.prayer) {
           // Editing
-          delete prayer.id
+          delete prayer.$id
           delete prayer.contentMarked
           delete prayer.createdAt
 
-          FApp.database().ref(`/prayers/${this.prayer.id}`).update(prayer)
+          FApp.database().ref(`/prayers/${this.prayer.$id}`).update(prayer)
         } else {
           // New
           FApp.database().ref('/prayers').push(prayer)

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1>Prayer Requests ({{prayers.length}})</h1>
+        <h1>Prayer Requests ({{prayersCount}})</h1>
       </div>
       <div class="col-md-5">
         <div v-if="!showPrayerRequestForm" role="group" class="btn-group" style="margin-bottom: 1em">
@@ -20,7 +20,7 @@
             @dismiss="showPrayerRequestForm = false"></prayer-request-form>
         <prayers-list
             @selected="onPrayerSelected"
-            :selected="selectedPrayer ? selectedPrayer.id : ''"
+            :selected="selectedPrayer ? selectedPrayer.$id : ''"
             :prayersInitialized="prayersInitialized"
             :prayers="prayers"></prayers-list>
       </div>
@@ -108,7 +108,7 @@
       },
 
       selectedPrayerBelongsToUser() {
-        return this.selectedPrayerPoster && this.selectedPrayerPoster.id === this.user.uid
+        return this.selectedPrayerPoster && this.selectedPrayerPoster.$id === this.user.uid
       },
 
       prayersInitialized() {
@@ -117,6 +117,10 @@
 
       prayers() {
         return SPrayers.state.prayers
+      },
+
+      prayersCount() {
+        return SPrayers.state.count
       }
     },
 
@@ -131,34 +135,34 @@
           return
         }
 
-        if (this.selectedPrayer && this.selectedPrayer.id === prayer.id)
+        if (this.selectedPrayer && this.selectedPrayer.$id === prayer.$id)
         // Already selected
           return
 
         this.showPrayerRequestForm = false
-        this.$router.push(`/prayers/${prayer.id}`)
+        this.$router.push(`/prayers/${prayer.$id}`)
 
         // Increment the views
         const currentViews = _.get(this.selectedPrayer, ['views', SAuth.state.user.uid], 0)
         const update = {}; update[SAuth.state.user.uid] = currentViews + 1
 
         this.incrementViewsTimer = window.setTimeout(() => {
-          FApp.database().ref(`/prayers/${prayer.id}/views`).update(update)
+          FApp.database().ref(`/prayers/${prayer.$id}/views`).update(update)
           this.incrementViewsTimer = null // done, clear
-          console.log(`Views for prayer request ${this.selectedPrayer.id} incremented`)
+          console.log(`Views for prayer request ${this.selectedPrayer.$id} incremented`)
         }, 15000)
       },
 
       onDeleteSelectedPrayer() {
         confirm('Are you sure?', '<p>Once deleted, your request will be unrecoverable.</p>', () => {
-          FApp.database().ref(`/prayers/${this.selectedPrayer.id}`).remove()
+          FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).remove()
           this.$router.replace('/prayers')
         })
       },
 
       whenGodAnswersThePrayer() {
         confirm('Not by accident?', '<p>That is a great thing, but we just want to make sure you did not accidentally touched the button.</p><p>Other members will not be praying for this request anymore after this.</p>', () => {
-          FApp.database().ref(`/prayers/${this.selectedPrayer.id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
+          FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
         })
       }
     },

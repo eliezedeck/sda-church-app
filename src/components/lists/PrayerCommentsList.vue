@@ -44,7 +44,7 @@
 
     methods: {
       onDeleteComment(id) {
-        FApp.database().ref(`/prayers/${this.prayer.id}/comments/${id}`).remove()
+        FApp.database().ref(`/prayers/${this.prayer.$id}/comments/${id}`).remove()
       }
     }
   }

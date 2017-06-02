@@ -40,7 +40,7 @@
 
     methods: {
       onSubmit() {
-        FApp.database().ref(`/prayers/${this.prayer.id}/comments`).push({
+        FApp.database().ref(`/prayers/${this.prayer.$id}/comments`).push({
           content: this.content,
           createdBy: SAuth.state.user.uid,
           createdAt: firebase.database.ServerValue.TIMESTAMP
