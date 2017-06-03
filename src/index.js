@@ -4,16 +4,37 @@ import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import './index.css'
 
-const rootEl = document.getElementById('root')
-ReactDOM.render(<App />, rootEl)
-registerServiceWorker()
+import ListPage from './components/ListPage'
+import CreatePage from './components/CreatePage'
+import {
+  BrowserRouter as Router,
+  Route
+} from 'react-router-dom'
+import ApolloClient, {createNetworkInterface} from 'apollo-client'
+import {ApolloProvider} from 'react-apollo'
 
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    const NextApp = require('./App').default
-    ReactDOM.render(
-      <NextApp />,
-      rootEl
-    )
+
+// Setup Apollo
+const client = new ApolloClient({
+  networkInterface: createNetworkInterface({
+    uri: 'https://api.graph.cool/simple/v1/cj3gqr4w6g8a601705165erav'
   })
-}
+})
+
+
+const rootEl = document.getElementById('root')
+ReactDOM.render(
+  (
+    <ApolloProvider client={client}>
+      <Router>
+        <App>
+          <Route exact path='/' component={ListPage} />
+          <Route path='/create' component={CreatePage} />
+        </App>
+      </Router>
+    </ApolloProvider>
+  ),
+  rootEl
+)
+
+registerServiceWorker()
