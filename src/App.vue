@@ -143,6 +143,7 @@
 
   p.help-block {
     font-size: 80%;
+    color: #adadad;
   }
 
   /* For markdown paragraphs */

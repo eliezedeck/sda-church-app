@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="user" class="container">
     <div class="row">
       <div class="col-md-12">
         <h1>Prayer Requests ({{prayersCount}})</h1>
@@ -35,8 +35,13 @@
         </h4>
         <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
         <hr />
+
+        <p v-if="!selectedPrayerBelongsToUser">
+          <span v-if="alreadyPrayingForTheRequest">Thank you for praying for this request.</span>
+          <a @click.prevent="onPrayingForRequest" v-else="" href="#">I would like to <strong>pray</strong> for this request.</a>
+        </p>
+
         <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
-        <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
 
         <hr />
         <h5>Comments</h5>
@@ -121,6 +126,13 @@
 
       prayersCount() {
         return SPrayers.state.count
+      },
+
+      alreadyPrayingForTheRequest() {
+        if (this.user && this.selectedPrayer) {
+          return _.get(this.selectedPrayer, ['prayingMembers', this.user.uid], false)
+        }
+        return false
       }
     },
 
@@ -158,6 +170,10 @@
           FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).remove()
           this.$router.replace('/prayers')
         })
+      },
+
+      onPrayingForRequest() {
+        FApp.database().ref(`/prayers/${this.selectedPrayer.$id}/prayingMembers/${this.user.uid}`).set(true)
       },
 
       whenGodAnswersThePrayer() {
