@@ -25,8 +25,10 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
   wsClient
 )
 
+// TODO: follow the guide at https://www.learnapollo.com/excursions/excursion-02 for caching + efficiency
 const client = new ApolloClient({
   networkInterface: networkInterfaceWithSubscriptions,
+  dataIdFromObject: o => o.id
 })
 
 
