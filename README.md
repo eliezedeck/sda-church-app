@@ -1,5 +1,7 @@
 # SDA Church App
 
+**UPDATE: State of GraphQL --** While the hype and the movements behind this technology is huge, it still seems to be a too fast a moving target, that things tend to change too often too fast. Because of this, documents quickly becomes irrelevant and outdated, which makes development according to any established best practice still not possible. I would like to re-explore this branch once the open-source projects behind this stabilizes and breaking changes happen less often. 
+
 This is the GraphQL version of this project.
 
 Firebase is a very cool platform, but its biggest drawback is the lack of data structure and constrains, and above everything else, **missing relationships**.
