@@ -22,7 +22,7 @@
             @selected="onPrayerSelected"
             :selected="selectedPrayer ? selectedPrayer.$id : ''"
             :prayersInitialized="prayersInitialized"
-            :prayers="prayers"></prayers-list>
+            :prayers="prayers" />
       </div>
       <div v-if="selectedPrayer" class="col-md-7">
         <h4>
@@ -36,10 +36,9 @@
         <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
         <hr />
 
-        <p v-if="!selectedPrayerBelongsToUser">
-          <span v-if="alreadyPrayingForTheRequest">Thank you for praying for this request.</span>
-          <a @click.prevent="onPrayingForRequest" v-else="" href="#">I would like to <strong>pray</strong> for this request.</a>
-        </p>
+        <pray-action
+            v-if="!selectedPrayerBelongsToUser"
+            :prayerId="selectedPrayer.$id" :userId="user.uid" />
 
         <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
 
@@ -58,7 +57,7 @@
         <prayer-request-comments-form
             v-else=""
             @dismiss="showPrayerCommentsForm = false"
-            :prayer="selectedPrayer"></prayer-request-comments-form>
+            :prayer="selectedPrayer" />
         <prayer-comments-list
             :prayer="selectedPrayer"></prayer-comments-list>
       </div>
@@ -72,6 +71,7 @@
   import PrayersList from './lists/PrayersList.vue'
   import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
   import PrayerCommentsList from './lists/PrayerCommentsList.vue'
+  import PrayAction from './actions/PrayForARequestAction.vue'
   import {SAuth} from '../stores/auth.js'
   import {SPrayers} from '../stores/prayers'
   import {SMembers} from '../stores/members'
@@ -126,13 +126,6 @@
 
       prayersCount() {
         return SPrayers.state.count
-      },
-
-      alreadyPrayingForTheRequest() {
-        if (this.user && this.selectedPrayer) {
-          return _.get(this.selectedPrayer, ['prayingMembers', this.user.uid], false)
-        }
-        return false
       }
     },
 
@@ -172,11 +165,6 @@
         })
       },
 
-      onPrayingForRequest() {
-        FApp.database().ref(
-          `/membersPrayingForPrayerRequests/${this.selectedPrayer.$id}/${this.user.uid}`).set(true)
-      },
-
       whenGodAnswersThePrayer() {
         confirm('Not by accident?', '<p>That is a great thing, but we just want to make sure you did not accidentally touched the button.</p><p>Other members will not be praying for this request anymore after this.</p>', () => {
           FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
@@ -188,7 +176,8 @@
       PrayerRequestForm,
       PrayersList,
       PrayerRequestCommentsForm,
-      PrayerCommentsList
+      PrayerCommentsList,
+      PrayAction
     }
   }
 </script>
