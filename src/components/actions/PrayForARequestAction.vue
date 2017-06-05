@@ -24,8 +24,7 @@
 
     methods: {
       onPrayingForRequest() {
-        FApp.database().ref(
-          `/membersPrayingForPrayerRequests/${this.prayerId}/${this.userId}`).set(true)
+        this.$firebaseRefs.alreadyPrayingForTheRequest.set(true)
       },
     },
 
