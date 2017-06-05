@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 
@@ -8,28 +7,17 @@ import gql from 'graphql-tag'
 
 
 class ListPage extends Component {
-  componentWillReceiveProps(newProps) {
-    if (!newProps.posts.loading) {
-      if (this.subscription) {
-        if (newProps.posts !== this.props.posts) {
-          // changed, we need to unsubscribe before resubscribing
-          this.subscription.unsubscribe()
-        } else {
-          // we already have an active subscription with the right params
-          return
-        }
+  componentDidMount() {
+    this.subscription = this.props.posts.subscribeToMore({
+      document: POSTS_SUBSCRIPTION,
+      variables: null,
+      updateQuery: (previousResult, { subscriptionData }) => {
+        console.log(subscriptionData)
+        // const newResult = _.cloneDeep(previousResult); // never mutate state!
+        console.log(previousResult)
+        return previousResult
       }
-
-      this.subscription = newProps.posts.subscribeToMore({
-        document: POSTS_SUBSCRIPTION,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          console.log(subscriptionData)
-          const newResult = _.cloneDeep(previousResult); // never mutate state!
-          return newResult
-        },
-        onError: (err) => console.error(err),
-      })
-    }
+    })
   }
   
   render() {
@@ -65,12 +53,13 @@ const POSTS_SUBSCRIPTION = gql`subscription {
     mutation
     node {
       id
-      imageUrl
       description
     }
+    previousValues {
+      id
+    }
   }
-} 
-`
+}`
 
 const withData = graphql(POST_QUERY, {
   name: 'posts'
