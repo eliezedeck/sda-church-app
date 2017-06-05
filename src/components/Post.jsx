@@ -27,7 +27,6 @@ class Post extends Component {
   handleDelete = async () => {
     const start = new Date()
     await this.props.mutate({variables: {id: this.props.post.id}})
-    this.props.refresh()
     console.log(`Delete operation took ${new Date() - start}`)
   }
 }

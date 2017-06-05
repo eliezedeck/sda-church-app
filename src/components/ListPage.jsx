@@ -44,7 +44,7 @@ class ListPage extends Component {
         </Link>
         <div className='w-100' style={{ maxWidth: 400 }}>
           {this.props.posts.allPosts.map((post) =>
-            <Post key={post.id} post={post} refresh={() => this.props.data.refetch()} />
+            <Post key={post.id} post={post} />
           )}
         </div>
       </div>
