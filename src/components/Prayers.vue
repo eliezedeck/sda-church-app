@@ -173,7 +173,8 @@
       },
 
       onPrayingForRequest() {
-        FApp.database().ref(`/prayers/${this.selectedPrayer.$id}/prayingMembers/${this.user.uid}`).set(true)
+        FApp.database().ref(
+          `/membersPrayingForPrayerRequests/${this.selectedPrayer.$id}/${this.user.uid}`).set(true)
       },
 
       whenGodAnswersThePrayer() {

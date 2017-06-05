@@ -35,6 +35,25 @@
 
       // List of prayers
       ".read": "auth != null"
+    },
+
+    "membersPrayingForPrayerRequests": {
+      ".read": "auth != null",
+
+      "$prayer_id": {
+        "$uid": {
+          // Must be a boolean
+          ".validate": "
+          	newData.isBoolean()",
+
+          // - Must be the owner
+          // - Must correspond to an existing prayer
+          ".write": "
+          	auth != null &&
+              $uid == auth.uid &&
+              root.child('prayers').hasChild($prayer_id)"
+        }
+      }
     }
   }
 }
