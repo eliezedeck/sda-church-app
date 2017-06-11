@@ -11,7 +11,7 @@
     "react-dom": "^15.5.4",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "subscriptions-transport-ws": "0.6.0"
+    "subscriptions-transport-ws": "^0.7.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"
