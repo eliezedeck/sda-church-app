@@ -48,7 +48,6 @@ function node(name) {
   }
 }
 
-
 function childData(name) {
   return {
     matchUserID() {
@@ -108,15 +107,18 @@ function operations(rules) {
   let r = ''
 
   // Create
-  r += `(newData.exists() && !data.exists() && ${rules.create}) || `
+  if (rules.create)
+    r += `(newData.exists() && !data.exists() && ${rules.create}) || `
 
   // Edit/modify
-  r += `(newData.exists() && data.exists() && ${rules.edit} || `
+  if (rules.edit)
+    r += `(newData.exists() && data.exists() && ${rules.edit}) || `
 
   // Delete
-  r += `(!newData.exists() && data.exists() && ${rules.delete}`
+  if (rules.delete)
+    r += `(!newData.exists() && data.exists() && ${rules.delete}) || `
 
-  return r
+  return r.substr(0, r.length - 4)
 }
 
 
@@ -140,6 +142,8 @@ const rules = {
   },
 
   prayers: {
+    '.read': hasProfile(),
+
     $prayer_id: {
       '.validate': fields({
         views: {type: 'number'},
@@ -148,8 +152,6 @@ const rules = {
         anonymous: {type: 'bool', optional: true}
       })
     },
-
-    '.read': hasProfile(),
 
     '.write': operations({
       'create': `${hasProfile()} && ${childData('poster').matchUserID()}`,
