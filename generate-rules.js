@@ -34,7 +34,7 @@ function hasAnyRoles(roles) {
   return ''
 }
 
-function node(name) {
+function location(name) {
   return {
     matchUserID() {
       return `(${requiresAuth()} && (auth.uid === ${name}))`
@@ -48,10 +48,26 @@ function node(name) {
   }
 }
 
-function childData(name) {
+function child(name, newData) {
+  let source = 'data'
+  if (newData)
+    source = 'newData'
+
   return {
     matchUserID() {
-      return `(${requiresAuth()} && auth.uid === data.child('${name}').val())`
+      return `(${requiresAuth()} && auth.uid === ${source}.child('${name}').val())`
+    },
+
+    equalToString(value) {
+      return `(${source}.child('${name}').val() === '${value}')`
+    },
+
+    equalTo(value) {
+      return `(${source}.child('${name}').val() === ${value})`
+    },
+
+    exists() {
+      return `(${source}.child('${name}').exists())`
     }
   }
 }
@@ -100,7 +116,7 @@ function fields(definitions) {
   if (fieldChecks)
     r += ` && ${fieldChecks.substr(0, fieldChecks.length - 4)}`
 
-  return r
+  return `(${r})`
 }
 
 function operations(rules) {
@@ -125,10 +141,10 @@ function operations(rules) {
 const rules = {
   memberRoles: {
     $uid: {
-      '.read': `${hasAnyRoles([ADMIN])} || ${node('$uid').matchUserID()}`,
+      '.read': `${hasAnyRoles([ADMIN])} || ${location('$uid').matchUserID()}`,
 
       $role: {
-        '.validate': `newData.isBoolean() && ${node('$role').inStringEnum(ROLES)}`,
+        '.validate': `newData.isBoolean() && ${location('$role').inStringEnum(ROLES)}`,
         '.write': `${hasAnyRoles([ADMIN])}`
       }
     }
@@ -137,7 +153,7 @@ const rules = {
   members: {
     $uid: {
       '.read': hasProfile(),
-      '.write': `${node('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+      '.write': `${location('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
     }
   },
 
@@ -147,16 +163,16 @@ const rules = {
     $prayer_id: {
       '.validate': fields({
         views: {type: 'number'},
-        poster: {type: 'user.uid'},
+        poster: {type: 'user.uid', optional: true},
         content: {type: 'string', min: 7, max: 4096},
-        anonymous: {type: 'bool', optional: true}
-      })
+        anonymous: {type: 'bool'}
+      }) + ` && ((${child('anonymous', true).equalTo('false')} && ${child('poster', true).exists()}) || ${child('anonymous', true).equalTo('true')})`
     },
 
     '.write': operations({
-      'create': `${hasProfile()} && ${childData('poster').matchUserID()}`,
-      'edit': childData('poster').matchUserID(),
-      'delete': childData('poster').matchUserID()
+      'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
+      'edit': child('poster').matchUserID(),
+      'delete': child('poster').matchUserID()
     })
   },
 
@@ -172,7 +188,7 @@ const rules = {
       }),
 
       '.write': operations({
-        'create': `${hasProfile()} && ${childData('createdBy').matchUserID()}`,
+        'create': `${hasProfile()} && ${child('createdBy', true).matchUserID()}`,
         'edit': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`,
         'delete': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`
       })
@@ -185,7 +201,7 @@ const rules = {
     $prayer_id: {
       $uid: {
         '.validate': 'newData.isBoolean()',
-        '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${childData('$uid').matchUserID()}`,
+        '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${location('$uid').matchUserID()}`,
       }
     }
   }
