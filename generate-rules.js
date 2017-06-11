@@ -1,8 +1,18 @@
 const {forEach} = require('lodash')
 
+const ADMIN = 'zedeck'
 const ID_STRING_LENGTH = 20
+const USER_ID_STRING_LENGTH = 28
 const PROFILES_NODE = 'members'
 const ROLES_NODE = 'memberRoles'
+const ROLES = [
+  'clerk',
+  'church_elder',
+  'elder',
+  'department_director',
+  'department_secretary',
+  'department_assistant'
+]
 
 
 function requiresAuth() {
@@ -26,15 +36,22 @@ function hasAnyRoles(roles) {
 
 function node(name) {
   return {
-    mustMatchUID() {
+    matchUserID() {
       return `(${requiresAuth()} && (auth.uid === ${name}))`
+    },
+
+    inStringEnum(list) {
+      let r = ''
+      forEach(list, e => { r += `${name} === '${e}' || ` })
+      return `(${r.substr(0, r.length - 4)})`
     }
   }
 }
 
-function child(name) {
+
+function childData(name) {
   return {
-    mustMatchUID() {
+    matchUserID() {
       return `(${requiresAuth()} && auth.uid === data.child('${name}').val())`
     }
   }
@@ -57,6 +74,9 @@ function fields(definitions) {
           field += ` && newData.child('${key}').val().length >= ${def.min}`
         if ('max' in def)
           field += ` && newData.child('${key}').val().length <= ${def.max}`
+      }
+      else if (def.type === 'uid') {
+        field += `${requiresAuth()} && newData.child('${key}').isString() && newData.child('${key}').val().length === ${USER_ID_STRING_LENGTH}`
       }
       else if (def.type === 'user.uid') {
         field += `${requiresAuth()} && newData.child('${key}').isString() && newData.child('${key}').val() === auth.uid`
@@ -101,10 +121,21 @@ function operations(rules) {
 
 
 const rules = {
+  memberRoles: {
+    $uid: {
+      '.read': `${hasAnyRoles([ADMIN])} || ${node('$uid').matchUserID()}`,
+
+      $role: {
+        '.validate': `newData.isBoolean() && ${node('$role').inStringEnum(ROLES)}`,
+        '.write': `${hasAnyRoles([ADMIN])}`
+      }
+    }
+  },
+
   members: {
-    $member_id: {
+    $uid: {
       '.read': hasProfile(),
-      '.write': `${node('$member_id').mustMatchUID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
+      '.write': `${node('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
     }
   },
 
@@ -118,30 +149,42 @@ const rules = {
       })
     },
 
-    // List of prayers
     '.read': hasProfile(),
 
     '.write': operations({
-      'create': hasProfile(),
-      'edit': child('$prayer_id').mustMatchUID(),
-      'delete': child('$prayer_id').mustMatchUID()
+      'create': `${hasProfile()} && ${childData('poster').matchUserID()}`,
+      'edit': childData('poster').matchUserID(),
+      'delete': childData('poster').matchUserID()
     })
   },
 
   prayerComments: {
+    '.read': hasProfile(),
+
     $comments_id: {
       '.validate': fields({
         prayerId: {type: 'id'},
         content: {type: 'string', min: 3, max: 4096},
-        createdBy: {type: 'user.uid'},
+        createdBy: {type: 'uid'},
         createdAt: {type: 'timestamp'}
       }),
 
       '.write': operations({
-        'create': hasProfile(),
-        'edit': `${hasProfile()} && ${node('$comments_id').mustMatchUID()}`,
-        'delete': `${hasProfile()} && ${node('$comments_id').mustMatchUID()}`
+        'create': `${hasProfile()} && ${childData('createdBy').matchUserID()}`,
+        'edit': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`,
+        'delete': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`
       })
+    }
+  },
+
+  membersPrayingForPrayerRequests: {
+    '.read': hasProfile(),
+
+    $prayer_id: {
+      $uid: {
+        '.validate': 'newData.isBoolean()',
+        '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${childData('$uid').matchUserID()}`,
+      }
     }
   }
 }
