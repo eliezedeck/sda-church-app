@@ -18,6 +18,7 @@ import {SubscriptionClient, addGraphQLSubscriptions} from 'subscriptions-transpo
 // Setup Apollo + Subscription
 const wsClient = new SubscriptionClient(`wss://subscriptions.graph.cool/v1/cj3gqr4w6g8a601705165erav`, {
   reconnect: true,
+  timeout: 15000
 })
 
 const networkInterface = createNetworkInterface({ uri: 'https://api.graph.cool/simple/v1/cj3gqr4w6g8a601705165erav' })
@@ -29,8 +30,8 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
 // TODO: follow the guide at https://www.learnapollo.com/excursions/excursion-02 for caching + efficiency
 const client = new ApolloClient({
   networkInterface: networkInterfaceWithSubscriptions,
+  dataIdFromObject: o => o.id
   // networkInterface: wsClient,
-  // dataIdFromObject: o => o.id
 })
 
 

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 
@@ -6,16 +7,34 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 
+const POSTS_SUBSCRIPTION = gql`subscription {
+  Post {
+    mutation
+    node {
+      id
+      description
+    }
+    previousValues {
+      id
+    }
+  }
+}`
+
+
 class ListPage extends Component {
   componentDidMount() {
     this.subscription = this.props.posts.subscribeToMore({
       document: POSTS_SUBSCRIPTION,
       variables: null,
       updateQuery: (previousResult, { subscriptionData }) => {
-        console.log(subscriptionData)
-        // const newResult = _.cloneDeep(previousResult); // never mutate state!
-        console.log(previousResult)
-        return previousResult
+        let newResult = _.cloneDeep(previousResult); // never mutate state!
+
+        const sub = subscriptionData.data.Post
+        if (sub.mutation === 'DELETED') {
+          newResult.allPosts = _.filter(newResult.allPosts, e => e.id !== sub.previousValues.id)
+        }
+
+        return newResult
       }
     })
   }
@@ -45,19 +64,6 @@ const POST_QUERY = gql`query allPosts {
     id
     imageUrl
     description
-  }
-}`
-
-const POSTS_SUBSCRIPTION = gql`subscription {
-  Post {
-    mutation
-    node {
-      id
-      description
-    }
-    previousValues {
-      id
-    }
   }
 }`
 
