@@ -198,6 +198,19 @@ const rules = {
     }
   },
 
+  prayerViews: {
+    // Listing
+    '.read': hasProfile(),
+
+    $prayer_id: {
+      '.validate': `newData.isNumber()`,
+
+      '.write': operations({
+        'create': `${hasProfile()} && newData.val() === 1`,
+        'edit': `${hasProfile()}`,
+        'delete': `false`
+      })
+    }
   },
 
   prayerComments: {
