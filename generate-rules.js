@@ -1,4 +1,4 @@
-const {forEach} = require('lodash')
+const {forEach, split} = require('lodash')
 
 const ADMIN = 'zedeck'
 const ID_STRING_LENGTH = 20
@@ -15,12 +15,34 @@ const ROLES = [
 ]
 
 
+function root(path) {
+  let r = 'root'
+  const path_components = split(path, '/')
+  forEach(path_components, c => {
+    if (c) {
+      // component isn't empty
+      if (c === 'auth.uid')
+        r += `.child(${c})`
+      else
+        r += `.child('${c}')`
+    }
+  })
+  return {
+    matchUserID() {
+      return `(${r}.val() === auth.uid)`
+    },
+    exists() {
+      return `(${r}.exists())`
+    }
+  }
+}
+
 function requiresAuth() {
   return '(auth !== null)'
 }
 
 function hasProfile() {
-  return `(${requiresAuth()} && root.child('${PROFILES_NODE}').child(auth.uid).exists())`
+  return `(${requiresAuth()} && ${root(PROFILES_NODE + '/auth.uid').exists()})`
 }
 
 function hasAnyRoles(roles) {
