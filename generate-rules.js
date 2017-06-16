@@ -184,18 +184,20 @@ const rules = {
 
     $prayer_id: {
       '.validate': fields({
-        views: {type: 'number'},
         poster: {type: 'user.uid', optional: true},
         content: {type: 'string', min: 7, max: 4096},
-        anonymous: {type: 'bool'}
-      }) + ` && ((${child('anonymous', true).equalTo('false')} && ${child('poster', true).exists()}) || ${child('anonymous', true).equalTo('true')})`
-    },
+        anonymous: {type: 'bool'},
+        createdAt: {type: 'timestamp'}
+      }) + ` && ((${child('anonymous', true).equalTo('false')} && ${child('poster', true).exists()}) || ${child('anonymous', true).equalTo('true')})`,
 
-    '.write': operations({
-      'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
-      'edit': child('poster').matchUserID(),
-      'delete': child('poster').matchUserID()
-    })
+      '.write': operations({
+        'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
+        'edit': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`,
+        'delete': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
+      })
+    }
+  },
+
   },
 
   prayerComments: {
