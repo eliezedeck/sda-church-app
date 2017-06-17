@@ -20,7 +20,7 @@
       <tr
           v-for="(prayer, id) in prayers"
           @click="$emit('selected', prayer)" :class="{active: selected === id, success: prayer.answeredAt}">
-        <td class="clipped" v-html="prayer.contentMarked"></td>
+        <td class="clipped" v-html="markedFirstLine(prayer.content)"></td>
         <td class="text-right">{{getPrayerViewsCount(prayer)}}</td>
       </tr>
       </tbody>
@@ -30,6 +30,7 @@
 
 <script>
   import _ from 'lodash'
+  import marked from 'marked'
 
   export default {
     name: 'PrayersList',
@@ -58,6 +59,11 @@
     methods: {
       getPrayerViewsCount(prayer) {
         return _.get(this.prayerViews, prayer.$id, 0)
+      },
+
+      markedFirstLine(content) {
+        const first_line = _.trim(_.split(content, '\n')[0])
+        return marked(first_line)
       }
     }
   }

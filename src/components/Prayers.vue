@@ -34,7 +34,7 @@
           <span v-if="!selectedPrayerPoster">Anonymous prayer request</span>
           &mdash; <small>{{selectedPrayer.createdAt | ts2date}}</small>
         </h4>
-        <div id="prayer-content" v-html="selectedPrayer.contentMarked"></div>
+        <div id="prayer-content" v-html="marked(selectedPrayer.content)"></div>
         <hr />
 
         <pray-action
@@ -68,6 +68,7 @@
 
 <script>
   import _ from 'lodash'
+  import marked from 'marked'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
   import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
@@ -173,6 +174,10 @@
         confirm('Not by accident?', '<p>That is a great thing, but we just want to make sure you did not accidentally touched the button.</p><p>Other members will not be praying for this request anymore after this.</p>', () => {
           FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
         })
+      },
+
+      marked(content) {
+        return marked(content)
       }
     },
 
