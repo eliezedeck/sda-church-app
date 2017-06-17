@@ -24,3 +24,8 @@ export const SPrayers = createStoreWithFirebaseSubscription({
     return lookup
   }
 })
+
+export const SPrayerViews = createStoreWithFirebaseSubscription({
+  key: 'prayerViews',
+  path: '/prayerViews'
+})

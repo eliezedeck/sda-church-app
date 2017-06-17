@@ -45,6 +45,11 @@
         required: true
       },
 
+      prayerViews: {
+        type: Object, // list
+        required: true
+      },
+
       selected: {
         type: String
       }
@@ -52,11 +57,7 @@
 
     methods: {
       getPrayerViewsCount(prayer) {
-        let count = 0
-        _.forEach(prayer.views, (v) => {
-          count += v
-        })
-        return count
+        return _.get(this.prayerViews, prayer.$id, 0)
       }
     }
   }

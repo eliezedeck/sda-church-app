@@ -22,6 +22,7 @@
             @selected="onPrayerSelected"
             :selected="selectedPrayer ? selectedPrayer.$id : ''"
             :prayersInitialized="prayersInitialized"
+            :prayerViews="prayerViews"
             :prayers="prayers" />
       </div>
       <div v-if="selectedPrayer" class="col-md-7">
@@ -73,7 +74,7 @@
   import PrayerCommentsList from './lists/PrayerCommentsList.vue'
   import PrayAction from './actions/PrayForARequestAction.vue'
   import {SAuth} from '../stores/auth.js'
-  import {SPrayers} from '../stores/prayers'
+  import {SPrayers, SPrayerViews} from '../stores/prayers'
   import {SMembers} from '../stores/members'
   import firebase from 'firebase'
   import FApp from '../stores/firebase.js'
@@ -91,6 +92,7 @@
     },
 
     beforeCreate() {
+      SPrayerViews.fdi()
       SPrayers.fdi()
       SMembers.fdi()
     },
@@ -124,6 +126,10 @@
         return SPrayers.state.prayers
       },
 
+      prayerViews() {
+        return SPrayerViews.state.prayerViews
+      },
+
       prayersCount() {
         return SPrayers.state.count
       }
@@ -148,11 +154,9 @@
         this.$router.push(`/prayers/${prayer.$id}`)
 
         // Increment the views
-        const currentViews = _.get(this.selectedPrayer, ['views', SAuth.state.user.uid], 0)
-        const update = {}; update[SAuth.state.user.uid] = currentViews + 1
-
+        const currentViews = _.get(this.prayerViews, prayer.$id, 0)
         this.incrementViewsTimer = window.setTimeout(() => {
-          FApp.database().ref(`/prayers/${prayer.$id}/views`).update(update)
+          FApp.database().ref(`/prayerViews/${prayer.$id}`).set(currentViews + 1)
           this.incrementViewsTimer = null // done, clear
           console.log(`Views for prayer request ${this.selectedPrayer.$id} incremented`)
         }, 15000)
