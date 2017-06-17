@@ -59,7 +59,9 @@
         // Prepare the prayer
         let prayer = {
           content: this.content,
-          createdAt: firebase.database.ServerValue.TIMESTAMP
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          anonymous: this.anonymous,
+          shouldNotBe: true
         }
         if (!this.anonymous)
           prayer.poster = SAuth.state.user.uid

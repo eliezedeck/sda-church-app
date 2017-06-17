@@ -216,7 +216,7 @@ const rules = {
   prayerComments: {
     '.read': hasProfile(),
 
-    $comments_id: {
+    $prayer_id: {
       '.validate': fields({
         prayerId: {type: 'id'},
         content: {type: 'string', min: 3, max: 4096},
@@ -226,8 +226,8 @@ const rules = {
 
       '.write': operations({
         'create': `${hasProfile()} && ${child('createdBy', true).matchUserID()}`,
-        'edit': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`,
-        'delete': `${hasProfile()} || ${hasAnyRoles(['clerk', ADMIN])}`
+        'edit': `false`,
+        'delete': `${hasProfile()} || ${child('createdBy', false).matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
       })
     }
   },
