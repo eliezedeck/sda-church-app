@@ -173,8 +173,9 @@ const rules = {
   },
 
   members: {
+    '.read': `${hasProfile()}`,
+
     $uid: {
-      '.read': hasProfile(),
       '.write': `${location('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
     }
   },
