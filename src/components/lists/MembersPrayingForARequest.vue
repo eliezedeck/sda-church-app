@@ -1,7 +1,7 @@
 <template>
   <div class="table-responsive" style="font-size: 80%">
     <p style="margin-bottom: 0">Members praying for this request</p>
-    <ul>
+    <ul style="margin-bottom: 0">
       <li v-for="v in prayingMembers">
         {{memberName(v['.key'])}}
       </li>

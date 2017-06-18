@@ -158,4 +158,9 @@
   tr.active.success > td {
     background-color: rgba(112, 200, 98, 0.5) !important;
   }
+
+  hr {
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
 </style>

@@ -41,6 +41,7 @@
             v-if="!selectedPrayerBelongsToUser"
             :prayerId="selectedPrayer.$id"
             :userId="user.uid" class="text-center" />
+        <hr v-if="!selectedPrayerBelongsToUser" />
 
         <praying-members :prayerRequestId="selectedPrayer.$id" />
 
