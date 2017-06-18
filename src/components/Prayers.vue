@@ -39,11 +39,9 @@
 
         <pray-action
             v-if="!selectedPrayerBelongsToUser"
-            :prayerId="selectedPrayer.$id" :userId="user.uid" />
+            :prayerId="selectedPrayer.$id"
+            :userId="user.uid" class="text-center" />
 
-        <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
-
-        <hr />
         <h5>Comments</h5>
         <div role="group"
              v-if="!showPrayerCommentsForm"
