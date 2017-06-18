@@ -68,7 +68,7 @@
 
 <script>
   import _ from 'lodash'
-  import marked from 'marked'
+  import {Marked} from '../mixins.js'
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
   import PrayersList from './lists/PrayersList.vue'
   import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
@@ -83,6 +83,8 @@
 
   export default {
     name: 'Prayers',
+
+    mixins: [Marked],
 
     data() {
       return {
@@ -174,10 +176,6 @@
         confirm('Not by accident?', '<p>That is a great thing, but we just want to make sure you did not accidentally touched the button.</p><p>Other members will not be praying for this request anymore after this.</p>', () => {
           FApp.database().ref(`/prayers/${this.selectedPrayer.$id}`).update({answeredAt: firebase.database.ServerValue.TIMESTAMP})
         })
-      },
-
-      marked(content) {
-        return marked(content)
       }
     },
 
