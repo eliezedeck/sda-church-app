@@ -42,6 +42,10 @@
             :prayerId="selectedPrayer.$id"
             :userId="user.uid" class="text-center" />
 
+        <praying-members :prayerRequestId="selectedPrayer.$id" />
+
+        <hr />
+
         <h5>Comments</h5>
         <div role="group"
              v-if="!showPrayerCommentsForm"
@@ -72,6 +76,7 @@
   import PrayerRequestCommentsForm from './forms/PrayerRequestCommentsForm.vue'
   import PrayerCommentsList from './lists/PrayerCommentsList.vue'
   import PrayAction from './actions/PrayForARequestAction.vue'
+  import PrayingMembers from './lists/MembersPrayingForARequest.vue'
   import {SAuth} from '../stores/auth.js'
   import {SPrayers, SPrayerViews} from '../stores/prayers'
   import {SMembers} from '../stores/members'
@@ -182,7 +187,8 @@
       PrayersList,
       PrayerRequestCommentsForm,
       PrayerCommentsList,
-      PrayAction
+      PrayAction,
+      PrayingMembers
     }
   }
 </script>
