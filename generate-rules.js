@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const {forEach, split} = require('lodash')
 
 const ADMIN = 'zedeck'
@@ -156,7 +158,7 @@ function operations(rules) {
   if (rules.delete)
     r += `(!newData.exists() && data.exists() && ${rules.delete}) || `
 
-  return r.substr(0, r.length - 4)
+  return `(${r.substr(0, r.length - 4)})`
 }
 
 
@@ -245,6 +247,9 @@ const rules = {
   }
 }
 
-console.log(JSON.stringify({
+// Update rules
+const output = JSON.stringify({
   rules
-}, null, 2))
+}, null, 2)
+fs.writeFileSync(path.join(__dirname, 'database.rules.json'), output)
+console.log(output)
