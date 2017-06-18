@@ -236,9 +236,9 @@ const rules = {
   },
 
   membersPrayingForPrayerRequests: {
-    '.read': hasProfile(),
-
     $prayer_id: {
+      '.read': hasProfile(),
+
       $uid: {
         '.validate': 'newData.isBoolean()',
         '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${location('$uid').matchUserID()}`,
