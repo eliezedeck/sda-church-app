@@ -163,6 +163,9 @@ function operations(rules) {
 
 
 const rules = {
+  '.read': false,
+  '.write': false,
+
   memberRoles: {
     $uid: {
       '.read': `${hasAnyRoles([ADMIN])} || ${location('$uid').matchUserID()}`,
