@@ -25,7 +25,7 @@
     <div>
       <nav class="navbar navbar-inverse navbar-fixed-top navigation-clean">
         <div class="container">
-          <div class="navbar-header"><a href="#" class="navbar-brand navbar-link">English Speaking Church of ANTANANARIVO</a>
+          <div class="navbar-header"><a href="#" class="navbar-brand navbar-link">ESC of Antananarivo</a>
             <button data-toggle="collapse" data-target="#navcol-1" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
           </div>
           <div class="collapse navbar-collapse" id="navcol-1">
