@@ -210,7 +210,7 @@ const rules = {
 
       '.write': operations({
         'create': `${hasProfile()} && newData.val() === 1`,
-        'edit': `${hasProfile()} && newData.val() + 1 === data.val()`,
+        'edit': `${hasProfile()} && data.val() + 1 === newData.val()`,
         'delete': `false`
       })
     }
