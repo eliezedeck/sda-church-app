@@ -163,9 +163,6 @@ function operations(rules) {
 
 
 const rules = {
-  '.read': false,
-  '.write': false,
-
   memberRoles: {
     $uid: {
       '.read': `${hasAnyRoles([ADMIN])} || ${location('$uid').matchUserID()}`,
@@ -213,7 +210,7 @@ const rules = {
 
       '.write': operations({
         'create': `${hasProfile()} && newData.val() === 1`,
-        'edit': `${hasProfile()}`,
+        'edit': `${hasProfile()} && newData.val() + 1 === data.val()`,
         'delete': `false`
       })
     }
