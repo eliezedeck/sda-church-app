@@ -57,7 +57,7 @@ function hasAnyRoles(roles) {
   return ''
 }
 
-function location(name) {
+function wildcard(name) {
   return {
     matchUserID() {
       return `(${requiresAuth()} && (auth.uid === ${name}))`
@@ -159,10 +159,10 @@ function operations(rules) {
 const rules = {
   memberRoles: {
     $uid: {
-      '.read': `${hasAnyRoles([ADMIN])} || ${location('$uid').matchUserID()}`,
+      '.read': `${hasAnyRoles([ADMIN])} || ${wildcard('$uid').matchUserID()}`,
 
       $role: {
-        '.validate': `newData.isBoolean() && ${location('$role').inStringEnum(ROLES)}`,
+        '.validate': `newData.isBoolean() && ${wildcard('$role').inStringEnum(ROLES)}`,
         '.write': `${hasAnyRoles([ADMIN])}`
       }
     }
@@ -172,7 +172,7 @@ const rules = {
     '.read': `${hasProfile()}`,
 
     $uid: {
-      '.write': `${location('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+      '.write': `${wildcard('$uid').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
     }
   },
 
@@ -238,7 +238,7 @@ const rules = {
 
       $uid: {
         '.validate': 'newData.isBoolean()',
-        '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${location('$uid').matchUserID()}`,
+        '.write': `${hasProfile()} && root.child('prayers').child($prayer_id).exists() && ${wildcard('$uid').matchUserID()}`,
       }
     }
   }
