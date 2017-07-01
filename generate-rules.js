@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const {forEach, split} = require('lodash')
+const {forEach, split, assign} = require('lodash')
 
 const ADMIN = 'zedeck'
 const ID_STRING_LENGTH = 20
@@ -15,7 +15,6 @@ const ROLES = [
   'department_secretary',
   'department_assistant'
 ]
-
 
 function root(path) {
   let r = 'root'
@@ -96,51 +95,46 @@ function child(name, newData) {
   }
 }
 
-function fields(definitions) {
-  let r = ''
-  let fields = []
-  let fieldChecks = ''
+function type(definitions) {
+  let fieldsRules = {}
+  let mandatoryFields = []
 
   forEach(definitions, (def, key) => {
-    let field = ''
+    let rule = ''
     if ('type' in def) {
       if (def.type === 'bool' || def.type === 'boolean') {
-        field += `newData.child('${key}').isBoolean()`
+        rule += `newData.isBoolean()`
       }
       else if (def.type === 'string') {
-        field += `newData.child('${key}').isString()`
+        rule += `newData.isString()`
         if ('min' in def)
-          field += ` && newData.child('${key}').val().length >= ${def.min}`
+          rule += ` && newData.val().length >= ${def.min}`
         if ('max' in def)
-          field += ` && newData.child('${key}').val().length <= ${def.max}`
+          rule += ` && newData.val().length <= ${def.max}`
       }
       else if (def.type === 'uid') {
-        field += `${requiresAuth()} && newData.child('${key}').isString() && newData.child('${key}').val().length === ${USER_ID_STRING_LENGTH}`
+        rule += `${requiresAuth()} && newData.isString() && newData.val().length === ${USER_ID_STRING_LENGTH}`
       }
       else if (def.type === 'user.uid') {
-        field += `${requiresAuth()} && newData.child('${key}').isString() && newData.child('${key}').val() === auth.uid`
+        rule += `${requiresAuth()} && newData.isString() && newData.val() === auth.uid`
       }
       else if (def.type === 'id') {
-        field += `newData.child('${key}').isString() && newData.child('${key}').val().length === ${ID_STRING_LENGTH}`
+        rule += `newData.isString() && newData.val().length === ${ID_STRING_LENGTH}`
       }
       else if (def.type === 'timestamp' || def.type === 'number') {
-        field += `newData.child('${key}').isNumber()`
+        rule += `newData.isNumber()`
       }
 
-      if (def.optional)
-        field = `(newData.hasChild('${key}') && ${field}) || !newData.hasChild('${key}')`
-      else
-        fields.push(key)
-
-      fieldChecks += `(${field}) && `
+      if (!def.optional) {
+        mandatoryFields.push(key)
+      }
+      fieldsRules[key] = rule
     }
   })
 
-  r += `newData.hasChildren(['${fields.join("', '")}'])`
-  if (fieldChecks)
-    r += ` && ${fieldChecks.substr(0, fieldChecks.length - 4)}`
-
-  return `(${r})`
+  fieldsRules['.validate'] = `newData.hasChildren(['${mandatoryFields.join("', '")}'])`
+  fieldsRules['$other'] = {'.validate': false}
+  return fieldsRules
 }
 
 function operations(rules) {
@@ -185,24 +179,25 @@ const rules = {
   prayers: {
     '.read': hasProfile(),
 
-    $prayer_id: {
-      '.validate': fields({
+    $prayer_id: assign(
+      type({
         poster: {type: 'user.uid', optional: true},
         content: {type: 'string', min: 7, max: 4096},
         anonymous: {type: 'bool'},
         createdAt: {type: 'timestamp'}
-      }) + ` && ((${child('anonymous', true).equalTo('false')} && ${child('poster', true).exists()}) || ${child('anonymous', true).equalTo('true')})`,
+      }),
 
-      '.write': operations({
-        'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
-        'edit': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`,
-        'delete': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
-      })
-    }
+      {
+        '.write': operations({
+          'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
+          'edit': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`,
+          'delete': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
+        })
+      }
+    )
   },
 
   prayerViews: {
-    // Listing
     '.read': hasProfile(),
 
     $prayer_id: {
@@ -219,20 +214,22 @@ const rules = {
   prayerComments: {
     '.read': hasProfile(),
 
-    $prayer_id: {
-      '.validate': fields({
+    $prayer_id: assign(
+      type({
         prayerId: {type: 'id'},
         content: {type: 'string', min: 3, max: 4096},
         createdBy: {type: 'uid'},
         createdAt: {type: 'timestamp'}
       }),
 
-      '.write': operations({
-        'create': `${hasProfile()} && ${child('createdBy', true).matchUserID()}`,
-        'edit': `false`,
-        'delete': `${hasProfile()} || ${child('createdBy', false).matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
-      })
-    }
+      {
+        '.write': operations({
+          'create': `${hasProfile()} && ${child('createdBy', true).matchUserID()}`,
+          'edit': `false`,
+          'delete': `${hasProfile()} || ${child('createdBy', false).matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+        })
+      }
+    )
   },
 
   membersPrayingForPrayerRequests: {
