@@ -9,7 +9,7 @@
         </td>
         <td class="text-right">
           By <strong><member-span :member="membersLookup(comment.createdBy)"></member-span></strong>
-          <small>
+          <small v-if="user && comment.createdBy === user.uid">
             <span>(<a @click.prevent="onDeleteComment(id)" href="#">Delete</a>)</span>
           </small>
         </td>
