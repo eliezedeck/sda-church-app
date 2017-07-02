@@ -51,23 +51,22 @@
     "prayerComments": {
       ".read": "((auth !== null) && (root.child('members').child(auth.uid).exists()))",
       "$prayer_id": {
-        "prayerId": {
-          ".validate": "newData.isString() && newData.val().length === 20"
-        },
-        "content": {
-          ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 4096"
-        },
-        "createdBy": {
-          ".validate": "(auth !== null) && newData.isString() && newData.val().length === 28"
-        },
-        "createdAt": {
-          ".validate": "newData.isNumber()"
-        },
-        ".validate": "newData.hasChildren(['prayerId', 'content', 'createdBy', 'createdAt'])",
-        "$other": {
-          ".validate": false
-        },
-        ".write": "((newData.exists() && !data.exists() && ((auth !== null) && (root.child('members').child(auth.uid).exists())) && ((auth !== null) && auth.uid === newData.child('createdBy').val())) || (newData.exists() && data.exists() && false) || (!newData.exists() && data.exists() && ((auth !== null) && (root.child('members').child(auth.uid).exists())) || ((auth !== null) && auth.uid === data.child('createdBy').val()) || ((auth !== null) && (root.child('memberRoles').child(auth.uid).child('clerk').exists() || root.child('memberRoles').child(auth.uid).child('zedeck').exists()))))"
+        "$comment_id": {
+          "content": {
+            ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 4096"
+          },
+          "createdBy": {
+            ".validate": "(auth !== null) && newData.isString() && newData.val().length === 28"
+          },
+          "createdAt": {
+            ".validate": "newData.isNumber() && newData.val() === now"
+          },
+          ".validate": "newData.hasChildren(['content', 'createdBy', 'createdAt'])",
+          "$other": {
+            ".validate": false
+          },
+          ".write": "((newData.exists() && !data.exists() && ((auth !== null) && (root.child('members').child(auth.uid).exists())) && (root.child('prayers').child($prayer_id).exists()) && ((auth !== null) && auth.uid === newData.child('createdBy').val())) || (newData.exists() && data.exists() && false) || (!newData.exists() && data.exists() && ((auth !== null) && (root.child('members').child(auth.uid).exists())) || ((auth !== null) && auth.uid === data.child('createdBy').val()) || ((auth !== null) && (root.child('memberRoles').child(auth.uid).child('clerk').exists() || root.child('memberRoles').child(auth.uid).child('zedeck').exists()))))"
+        }
       }
     },
     "membersPrayingForPrayerRequests": {

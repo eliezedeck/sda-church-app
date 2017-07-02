@@ -224,22 +224,23 @@ const rules = {
   prayerComments: {
     '.read': hasProfile(),
 
-    $prayer_id: assign(
-      type({
-        prayerId: {type: 'id'},
-        content: {type: 'string', min: 3, max: 4096},
-        createdBy: {type: 'uid'},
-        createdAt: {type: 'timestamp'}
-      }),
+    $prayer_id: {
+      $comment_id: assign(
+        type({
+          content: {type: 'string', min: 3, max: 4096},
+          createdBy: {type: 'uid'},
+          createdAt: {type: 'now'}
+        }),
 
-      {
-        '.write': operations({
-          'create': `${hasProfile()} && ${child('createdBy', 'newData').matchUserID()}`,
-          'edit': `false`,
-          'delete': `${hasProfile()} || ${child('createdBy', 'data').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
-        })
-      }
-    )
+        {
+          '.write': operations({
+            'create': `${hasProfile()} && ${root('/prayers/$prayer_id').exists()} && ${child('createdBy', 'newData').matchUserID()}`,
+            'edit': `false`,
+            'delete': `${hasProfile()} || ${child('createdBy', 'data').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+          })
+        }
+      )
+    }
   },
 
   membersPrayingForPrayerRequests: {
