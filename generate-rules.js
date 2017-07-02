@@ -124,6 +124,9 @@ function type(definitions) {
       else if (def.type === 'timestamp' || def.type === 'number') {
         rule += `newData.isNumber()`
       }
+      else if (def.type === 'now') {
+        rule += `newData.isNumber() && newData.val() === now`
+      }
 
       if (!def.optional) {
         mandatoryFields.push(key)
