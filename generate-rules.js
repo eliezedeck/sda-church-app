@@ -128,7 +128,9 @@ function type(definitions) {
       if (!def.optional) {
         mandatoryFields.push(key)
       }
-      fieldsRules[key] = rule
+      fieldsRules[key] = {
+        '.validate': rule
+      }
     }
   })
 

@@ -18,10 +18,18 @@
     "prayers": {
       ".read": "((auth !== null) && (root.child('members').child(auth.uid).exists()))",
       "$prayer_id": {
-        "poster": "((auth !== null) && newData.isString() && newData.val() === auth.uid)",
-        "content": "(newData.isString() && newData.val().length >= 7 && newData.val().length <= 4096)",
-        "anonymous": "(newData.isBoolean())",
-        "createdAt": "(newData.isNumber())",
+        "poster": {
+          ".validate": "(auth !== null) && newData.isString() && newData.val() === auth.uid"
+        },
+        "content": {
+          ".validate": "newData.isString() && newData.val().length >= 7 && newData.val().length <= 4096"
+        },
+        "anonymous": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
         ".validate": "newData.hasChildren(['content', 'anonymous', 'createdAt'])",
         "$other": {
           ".validate": false
@@ -39,10 +47,18 @@
     "prayerComments": {
       ".read": "((auth !== null) && (root.child('members').child(auth.uid).exists()))",
       "$prayer_id": {
-        "prayerId": "(newData.isString() && newData.val().length === 20)",
-        "content": "(newData.isString() && newData.val().length >= 3 && newData.val().length <= 4096)",
-        "createdBy": "((auth !== null) && newData.isString() && newData.val().length === 28)",
-        "createdAt": "(newData.isNumber())",
+        "prayerId": {
+          ".validate": "newData.isString() && newData.val().length === 20"
+        },
+        "content": {
+          ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 4096"
+        },
+        "createdBy": {
+          ".validate": "(auth !== null) && newData.isString() && newData.val().length === 28"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
         ".validate": "newData.hasChildren(['prayerId', 'content', 'createdBy', 'createdAt'])",
         "$other": {
           ".validate": false
