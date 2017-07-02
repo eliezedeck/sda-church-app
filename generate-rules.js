@@ -22,7 +22,7 @@ function root(path) {
   forEach(path_components, c => {
     if (c) {
       // component isn't empty
-      if (c === 'auth.uid')
+      if (c === 'auth.uid' || c[0] === '$')
         r += `.child(${c})`
       else
         r += `.child('${c}')`
