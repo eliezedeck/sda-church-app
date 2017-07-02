@@ -27,6 +27,10 @@
         "anonymous": {
           ".validate": "newData.isBoolean()"
         },
+        "answeredAt": {
+          ".validate": "newData.isNumber() && newData.val() === now",
+          ".write": "((auth !== null) && (root.child('members').child(auth.uid).exists())) && ((auth !== null) && auth.uid === data.parent().child('poster').val())"
+        },
         "createdAt": {
           ".validate": "newData.isNumber()"
         },

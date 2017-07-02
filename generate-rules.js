@@ -71,11 +71,7 @@ function wildcard(name) {
   }
 }
 
-function child(name, newData) {
-  let source = 'data'
-  if (newData)
-    source = 'newData'
-
+function child(name, source) {
   return {
     matchUserID() {
       return `(${requiresAuth()} && auth.uid === ${source}.child('${name}').val())`
@@ -134,6 +130,10 @@ function type(definitions) {
       fieldsRules[key] = {
         '.validate': rule
       }
+
+      if (def['.write']) {
+        fieldsRules[key]['.write'] = def['.write']
+      }
     }
   })
 
@@ -189,14 +189,19 @@ const rules = {
         poster: {type: 'user.uid', optional: true},
         content: {type: 'string', min: 7, max: 4096},
         anonymous: {type: 'bool'},
+        answeredAt: {
+          type: 'now',
+          optional: true,
+          '.write': `${hasProfile()} && ${child('poster', 'data.parent()').matchUserID()}`
+        },
         createdAt: {type: 'timestamp'}
       }),
 
       {
         '.write': operations({
-          'create': `${hasProfile()} && ${child('poster', true).matchUserID()}`,
-          'edit': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`,
-          'delete': `${child('poster').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
+          'create': `${hasProfile()} && ${child('poster', 'newData').matchUserID()}`,
+          'edit': `${child('poster', 'data').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`,
+          'delete': `${child('poster', 'data').matchUserID()} || ${hasAnyRoles(['clerk', 'zedeck'])}`
         })
       }
     )
@@ -229,9 +234,9 @@ const rules = {
 
       {
         '.write': operations({
-          'create': `${hasProfile()} && ${child('createdBy', true).matchUserID()}`,
+          'create': `${hasProfile()} && ${child('createdBy', 'newData').matchUserID()}`,
           'edit': `false`,
-          'delete': `${hasProfile()} || ${child('createdBy', false).matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+          'delete': `${hasProfile()} || ${child('createdBy', 'data').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
         })
       }
     )
