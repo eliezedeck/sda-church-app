@@ -236,7 +236,7 @@ const rules = {
           '.write': operations({
             'create': `${hasProfile()} && ${root('/prayers/$prayer_id').exists()} && ${child('createdBy', 'newData').matchUserID()}`,
             'edit': `false`,
-            'delete': `${hasProfile()} || ${child('createdBy', 'data').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])}`
+            'delete': `${hasProfile()} && (${child('createdBy', 'data').matchUserID()} || ${hasAnyRoles(['clerk', ADMIN])})`
           })
         }
       )
