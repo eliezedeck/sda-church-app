@@ -40,6 +40,9 @@
 
     created() {
       this.$bindAsObject('comments', FApp.database().ref(`/prayerComments/${this.prayer.$id}`))
+      this.$watch('prayer', () => {
+        this.$bindAsObject('comments', FApp.database().ref(`/prayerComments/${this.prayer.$id}`))
+      })
     },
 
     computed: {
