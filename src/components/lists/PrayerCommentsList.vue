@@ -2,9 +2,9 @@
   <div class="table-responsive">
     <table class="table table-striped">
       <tbody>
-      <tr v-for="(comment, id) in prayer.comments">
+      <tr v-if="comment !== null && id !== '.key'" v-for="(comment, id) in comments">
         <td>
-          <div v-html="marked(comment.content)"></div>
+          <div v-html="marked(comment.content|| '')"></div>
           <small>{{comment.createdAt | ts2date}}</small>
         </td>
         <td class="text-right">
@@ -24,6 +24,7 @@
   import {SMembersMixin} from '../../stores/members.js'
   import {Marked} from '../../mixins.js'
   import FApp from '../../stores/firebase.js'
+  import {VueFire} from 'vuefire'
 
   export default {
     name: 'PrayerCommentsList',
@@ -32,8 +33,13 @@
 
     props: {
       prayer: {
-        type: Object
+        type: Object,
+        required: true
       }
+    },
+
+    created() {
+      this.$bindAsObject('comments', FApp.database().ref(`/prayerComments/${this.prayer.$id}`))
     },
 
     computed: {
@@ -44,7 +50,7 @@
 
     methods: {
       onDeleteComment(id) {
-        FApp.database().ref(`/prayers/${this.prayer.$id}/comments/${id}`).remove()
+        FApp.database().ref(`/prayerComments/${this.prayer.$id}/${id}`).remove()
       }
     }
   }
