@@ -161,8 +161,8 @@
         this.$router.push(`/prayers/${prayer.$id}`)
 
         // Increment the views
-        const currentViews = _.get(this.prayerViews, prayer.$id, 0)
         this.incrementViewsTimer = window.setTimeout(() => {
+          const currentViews = _.get(this.prayerViews, prayer.$id, 0)
           FApp.database().ref(`/prayerViews/${prayer.$id}`).set(currentViews + 1)
           this.incrementViewsTimer = null // done, clear
           console.log(`Views for prayer request ${this.selectedPrayer.$id} incremented`)
