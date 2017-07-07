@@ -6,6 +6,6 @@ import {Meteor} from 'meteor/meteor'
  ╚═╝└─┘┴─┘┴─┘└─┘└─┘ ┴ ┴└─┘┘└┘
  */
 
-const SuppliersCollection = new Meteor.Collection('suppliers')
+const PrayerRequestsCollection = new Meteor.Collection('prayerRequests')
 
-export default SuppliersCollection
+export default PrayerRequestsCollection

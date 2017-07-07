@@ -11,7 +11,6 @@ import SimpleSchema from 'simpl-schema'
 const profileSchema = new SimpleSchema({
   fullName: {
     type: String,
-    label: 'Nom + Prénom',
     max: 35
   }
 })
@@ -19,7 +18,6 @@ const profileSchema = new SimpleSchema({
 const documentSchema = new SimpleSchema({
   username: {
     type: String,
-    label: 'Pseudo',
     min: 2,
     max: 16,
     index: true,
@@ -78,8 +76,8 @@ Meteor.users.attachSchema(documentSchema, {transform: false})
 
 Meteor.methods({
   'users.authorizeAndUpdateName': function ({id, doc}) { //
-    if (!Roles.userIsInRole(this.userId, ['owner', 'zedeck']))
-      throw new Meteor.Error(403, "Vous n'êtes pas autorisé!")
+    if (!Roles.userIsInRole(this.userId, ['admin', 'zedeck']))
+      throw new Meteor.Error(403, "You are not authorized")
 
     new SimpleSchema({
       id: {
@@ -121,7 +119,7 @@ Meteor.methods({
  */
 
 Meteor.publish('users.all', function () { //
-  if (Roles.userIsInRole(this.userId, ['owner', 'zedeck'])) {
+  if (Roles.userIsInRole(this.userId, ['admin', 'zedeck'])) {
     return Meteor.users.find({}, {
       sort: {
         username: 1
@@ -138,7 +136,7 @@ Meteor.publish('users.all', function () { //
 })
 
 Meteor.publish('users.limited', function () { //
-  if (this.userId) {
+  if (Roles.userIsInRole(this.userId, ['member'])) {
     return Meteor.users.find({}, {
       sort: {
         username: 1

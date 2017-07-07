@@ -1,4 +1,5 @@
-import SuppliersCollection from '../collections/suppliers'
+import {Meteor} from 'meteor/meteor'
+import PrayerRequestsCollection from '../collections/prayerRequests'
 import SimpleSchema from 'simpl-schema'
 
 /*
@@ -37,7 +38,7 @@ const documentSchema = new SimpleSchema({
   },
 })
 
-SuppliersCollection.attachSchema(documentSchema, {transform: false})
+PrayerRequestsCollection.attachSchema(documentSchema, {transform: false})
 
 
 /*
@@ -61,7 +62,7 @@ new ValidatedMethod({
     doc.articlesCount = 0
 
     try {
-      return SuppliersCollection.insert(doc)
+      return PrayerRequestsCollection.insert(doc)
     } catch (e) {
       throw new Meteor.Error(400, e.message)
     }
@@ -89,7 +90,7 @@ new ValidatedMethod({
     delete doc.articlesCount
 
     try {
-      return SuppliersCollection.update(id, {
+      return PrayerRequestsCollection.update(id, {
         $set: doc
       })
     } catch (e) {
@@ -113,11 +114,9 @@ new ValidatedMethod({
  ╩  └─┘└─┘┴─┘┴└─┘┴ ┴ ┴ ┴└─┘┘└┘└─┘
  */
 
-Meteor.publish('suppliers.all', function () { //
-  if (Roles.userIsInRole(this.userId, ['seller', 'owner', 'zedeck'])) {
-    return SuppliersCollection.find({}, {
-      sort: {code: 1}
-    })
+Meteor.publish('prayerRequests.all', function () { //
+  if (Roles.userIsInRole(this.userId, ['member'])) {
+    return PrayerRequestsCollection.find({})
   }
 
   return this.ready()
