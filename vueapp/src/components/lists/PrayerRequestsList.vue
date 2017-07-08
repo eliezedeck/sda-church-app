@@ -8,7 +8,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="request in list">
+      <tr v-for="request in list" @click="$emit('selected', request)" :class="{active: selectedId === request._id}">
         <td class="clipped" v-html="markedFirstLine(request.content)"></td>
         <td class="text-right">{{request.viewsCount}}</td>
       </tr>
@@ -28,6 +28,9 @@
     props: {
       list: {
         type: Array
+      },
+      selectedId: {
+        type: String
       }
     }
   }

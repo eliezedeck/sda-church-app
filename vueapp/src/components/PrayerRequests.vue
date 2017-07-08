@@ -68,7 +68,10 @@
         </div>
       </div>
       <div class="col-md-5">
-        <PrayerRequestsList :list="prayerRequests"></PrayerRequestsList>
+        <PrayerRequestsList
+            :list="prayerRequests"
+            @selected="onPrayerRequestSelected"
+            :selectedId="selectedPrayerRequestId" />
       </div>
     </div>
   </div>
@@ -101,9 +104,18 @@
     },
 
     computed: {
+      selectedPrayerRequestId() {
+        return this.$route.params['selectedId']
+      }
     },
 
     methods: {
+      onPrayerRequestSelected(request) {
+        if (request)
+          this.$router.push(`/prayer-requests/${request._id}`)
+        else
+          this.$router.push(`/prayer-requests`)
+      }
     },
 
     components: {
