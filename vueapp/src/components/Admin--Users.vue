@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <h3>Utilisateurs </h3>
+        <h3>Members</h3>
       </div>
       <div class="col-md-5">
         <div role="group" class="btn-group" style="margin-bottom: 1em">
@@ -16,12 +16,12 @@
       </div>
       <div class="col-md-7">
         <div class="table-responsive">
-          <table class="table">
+          <table class="table table-stripped table-hover table-condensed">
             <thead>
             <tr>
-              <th>Identifiant</th>
-              <th>Noms</th>
-              <th>Rôles</th>
+              <th>Name & username</th>
+              <th>Full Name</th>
+              <th>Roles</th>
             </tr>
             </thead>
             <tbody>
@@ -30,12 +30,10 @@
                 @click="$router.push(`/admin/users/${user._id}`); showAuthProfileForm = false"
                 :class="{active: selectedUserId === user._id}"
             >
-              <td>{{user.username}}</td>
+              <td>{{user.profile.displayName}} <small>({{user.username}})</small></td>
               <td><strong>{{user.profile.fullName}}</strong></td>
               <td>
-                <ul style="margin-bottom: 0">
-                  <li v-for="role in filteredRoles(user)">{{role | named-role}}</li>
-                </ul>
+                {{filteredRoles(user) | named-roles}}
               </td>
             </tr>
             </tbody>
@@ -91,8 +89,12 @@
   }
 </script>
 
-<style>
+<style scoped="">
   h3 {
     margin-top: .5em;
+  }
+
+  small {
+    color: grey;
   }
 </style>

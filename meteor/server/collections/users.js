@@ -128,7 +128,7 @@ Meteor.publish('users.all', function () { //
   if (Roles.userIsInRole(this.userId, ['admin', 'zedeck'])) {
     return Meteor.users.find({}, {
       sort: {
-        username: 1
+        'profile.displayName': 1
       },
       fields: {
         roles: 1,
@@ -145,7 +145,7 @@ Meteor.publish('users.limited', function () { //
   if (Roles.userIsInRole(this.userId, ['member'])) {
     return Meteor.users.find({}, {
       sort: {
-        username: 1
+        'profile.displayName': 1
       },
       fields: {
         username: 1,

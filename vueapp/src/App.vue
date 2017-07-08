@@ -13,7 +13,7 @@
                   <strong style="color: orangered">Administration</strong> <span class="caret"></span>
                 </a>
                 <ul role="menu" class="dropdown-menu">
-                  <li role="presentation"><router-link to="/admin/users">Utilisateurs</router-link></li>
+                  <li role="presentation"><router-link to="/admin/users">Members</router-link></li>
                 </ul>
               </li>
 
