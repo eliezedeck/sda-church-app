@@ -9,8 +9,9 @@ export default {
     initialized: false,
     user: null,
     isZedeck: false,
-    isSeller: false,
-    isOwner: false,
+    isAdmin: false,
+    isChurchClerk: false,
+    isMember: false
   },
 
   mutations: {
@@ -21,14 +22,16 @@ export default {
           // Logged-in
           state.user = user
           state.isZedeck = Roles.userIsInRole(user._id, ['zedeck'])
-          state.isSeller = Roles.userIsInRole(user._id, ['seller'])
-          state.isOwner = Roles.userIsInRole(user._id, ['owner'])
+          state.isAdmin = Roles.userIsInRole(user._id, ['admin'])
+          state.isChurchClerk = Roles.userIsInRole(user._id, ['church-clerk'])
+          state.isMember = Roles.userIsInRole(user._id, ['member'])
         }
         else {
           state.user = null
           state.isZedeck = false
-          state.isSeller = false
-          state.isOwner = false
+          state.isAdmin = null
+          state.isChurchClerk = null
+          state.isMember = null
         }
       }
     }
