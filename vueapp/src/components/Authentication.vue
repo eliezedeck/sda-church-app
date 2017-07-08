@@ -2,25 +2,29 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
-        <h3 v-if="mode === 'registration'" class="text-center">Inscription</h3>
-        <h3 v-else="" class="text-center">S'identifier</h3>
+        <h3 v-if="mode === 'registration'" class="text-center">Registration</h3>
+        <h3 v-else="" class="text-center">Sign-in</h3>
         <div class="well well-sm">
           <form @submit.prevent.stop="onSubmit">
             <div class="form-group">
-              <label class="control-label">Nom d&#39;utilisateur / Pseudo</label>
-              <input v-focus v-model="username" name="username" type="text" placeholder="(en minuscule)" class="form-control" />
+              <label class="control-label">Username / Pseudo</label>
+              <input v-focus v-model="username" name="username" type="text" placeholder="(lower case preferred)" class="form-control" />
             </div>
             <div v-if="mode === 'registration'" class="form-group">
-              <label class="control-label">Votre nom + prénom (ou nom indicatif)</label>
+              <label class="control-label">Your full name</label>
               <input v-model="fullName" type="text" placeholder="(ex: RAMANISATELO Efatra)" class="form-control" />
             </div>
+            <div v-if="mode === 'registration'" class="form-group">
+              <label class="control-label">Calling name</label>
+              <input v-model="displayName" type="text" placeholder="(displayed throughout the application)" class="form-control" />
+            </div>
             <div class="form-group">
-              <label class="control-label">Mot de passe</label>
-              <input v-model="password" name="password" type="password" placeholder="(doit être 8 charactères ou plus)" class="form-control" />
+              <label class="control-label">Password</label>
+              <input v-model="password" name="password" type="password" placeholder="(must be 8 characters or more)" class="form-control" />
             </div>
             <div v-if="mode === 'registration'" class="form-group">
-              <label class="control-label">Répétez le mot de passe</label>
-              <input v-model="passwordRepeated" type="password" placeholder="(obligatoire)" class="form-control" />
+              <label class="control-label">Repeat the password</label>
+              <input v-model="passwordRepeated" type="password" placeholder="(mandatory)" class="form-control" />
             </div>
 
             <error-alert :error="error"></error-alert>
@@ -28,17 +32,17 @@
             <div role="group" class="btn-group">
               <submit-button
                   :inProgress="inProgress"
-                  :disabled="inProgress || fullName.length < 2 || username.length < 2 || password.length < 8 || passwordRepeated !== password"
-                  v-if="mode === 'registration'">Créer votre compte</submit-button>
+                  :disabled="fullName.length < 2 || displayName.length < 2 || username.length < 2 || password.length < 8 || passwordRepeated !== password"
+                  v-if="mode === 'registration'">Create your account</submit-button>
               <submit-button
                   :inProgress="inProgress"
-                  :disabled="inProgress || username.length < 2 || password.length < 8"
-                  v-else="">S'identifier</submit-button>
+                  :disabled="username.length < 2 || password.length < 8"
+                  v-else="">Sign-in</submit-button>
             </div>
           </form>
         </div>
-        <p v-if="mode === 'login'" class="text-center">Si vous n&#39;avez pas encore finis votre inscription, veuillez cliquer <a @click.prevent="mode = 'registration'" href="#">ici </a> pour s&#39;inscrire pour pouvoir utiliser l&#39;application.</p>
-        <p v-else="" class="text-center">Pour s'identifier, cliquez <a @click.prevent="mode = 'login'" href="#">ici</a></p>
+        <p v-if="mode === 'login'" class="text-center">If you have never created an account before click <a @click.prevent="mode = 'registration'" href="#">here</a> to create one in order to use the application.</p>
+        <p v-else="" class="text-center">To sign-in, click <a @click.prevent="mode = 'login'" href="#">here</a></p>
       </div>
     </div>
   </div>
@@ -56,6 +60,7 @@
         mode: 'login', // or 'registration'
 
         fullName: '',
+        displayName: '',
         username: '',
         password: '',
         passwordRepeated: ''
@@ -70,7 +75,8 @@
         if (this.mode === 'registration') {
           const data = {
             profile: {
-              fullName: this.fullName
+              fullName: this.fullName,
+              displayName: this.displayName
             },
             username: this.username,
             password: this.password

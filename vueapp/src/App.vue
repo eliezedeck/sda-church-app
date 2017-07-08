@@ -3,7 +3,7 @@
     <div v-if="auth.initialized">
       <nav class="navbar navbar-inverse navbar-fixed-top navigation-clean">
         <div class="container-fluid">
-          <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Mendrika</a>
+          <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">SDA ESC</a>
             <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
           </div>
           <div class="collapse navbar-collapse" id="navcol-1">
