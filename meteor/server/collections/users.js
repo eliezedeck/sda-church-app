@@ -12,6 +12,12 @@ const profileSchema = new SimpleSchema({
   fullName: {
     type: String,
     max: 35
+  },
+  displayName: {
+    type: String,
+    index: true,
+    unique: true,
+    max: 15
   }
 })
 
