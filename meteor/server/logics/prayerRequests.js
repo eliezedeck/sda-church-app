@@ -76,7 +76,7 @@ new ValidatedMethod({
       delete doc.createdBy
 
     try {
-      return PrayerRequestsCollection.insertOne(doc)
+      return PrayerRequestsCollection.insert(doc)
     } catch (e) {
       throw new Meteor.Error(400, e.message)
     }
@@ -111,7 +111,7 @@ new ValidatedMethod({
     delete doc.createdAt
 
     try {
-      return PrayerRequestsCollection.updateOne(id, {
+      return PrayerRequestsCollection.update(id, {
         $set: doc
       })
     } catch (e) {
