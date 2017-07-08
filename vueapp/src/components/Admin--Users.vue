@@ -7,9 +7,7 @@
       <div class="col-md-5">
         <div role="group" class="btn-group" style="margin-bottom: 1em">
           <button :disabled="!selectedUserId" @click="showAuthProfileForm = true"
-              class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Autorisation & Profil</button>
-          <button :disabled="!selectedUserId"
-              class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Supprimer</button>
+              class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Authorization & Profile</button>
         </div>
 
         <auth-profile-form v-if="selectedUserId && showAuthProfileForm" :userId="selectedUserId" @dismiss="showAuthProfileForm = false" />

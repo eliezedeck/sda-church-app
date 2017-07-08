@@ -2,11 +2,15 @@
   <div class="well well-sm">
     <form @submit.prevent.stop="onSubmit">
       <div class="form-group">
-        <label class="control-label">Nom + Prénom (ou nom indicatif)</label>
+        <label class="control-label">Full name</label>
         <input v-model="profile.fullName" class="form-control" type="text" />
       </div>
       <div class="form-group">
-        <label class="control-label">Rôles</label>
+        <label class="control-label">Calling name</label>
+        <input v-model="profile.displayName" class="form-control" type="text" />
+      </div>
+      <div class="form-group">
+        <label class="control-label">Roles</label>
 
         <div v-for="(roleName, key) in rolesEnum" v-if="key !== 'zedeck'" class="checkbox">
           <label class="control-label">
@@ -17,8 +21,8 @@
       <error-alert :error="error"></error-alert>
 
       <div role="group" class="btn-group">
-        <submit-button :disabled="profile.fullName.length < 2" :inProgress="inProgress">Enregistrer</submit-button>
-        <button @click="$emit('dismiss')" class="btn btn-default" type="button">Fermer</button>
+        <submit-button :disabled="profile.fullName.length < 2 || profile.displayName.length < 2" :inProgress="inProgress">Save</submit-button>
+        <button @click="$emit('dismiss')" class="btn btn-default" type="button">Cancel</button>
       </div>
     </form>
   </div>
@@ -52,6 +56,7 @@
 
         // Data
         profile : {
+          displayName: '',
           fullName : ''
         },
         roles: {
@@ -62,8 +67,10 @@
 
     methods: {
       onSubmit() {
+        this.inProgress = true
         const data = {
           profile : {
+            displayName: this.profile.displayName,
             fullName : this.profile.fullName
           },
           roles: {
@@ -72,6 +79,7 @@
         }
 
         Meteor.call('users.authorizeAndUpdateName', {id: this.userId, doc: data}, (err) => {
+          this.inProgress = false
           if (err) {
             this.error = err.message
           } else {

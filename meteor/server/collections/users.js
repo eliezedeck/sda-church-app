@@ -82,7 +82,7 @@ Meteor.users.attachSchema(documentSchema, {transform: false})
 
 Meteor.methods({
   'users.authorizeAndUpdateName': function ({id, doc}) { //
-    if (!Roles.userIsInRole(this.userId, ['admin', 'zedeck']))
+    if (!Roles.userIsInRole(this.userId, ['church-clerk', 'admin', 'zedeck']))
       throw new Meteor.Error(403, "You are not authorized")
 
     new SimpleSchema({
