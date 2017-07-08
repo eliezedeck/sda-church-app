@@ -127,9 +127,12 @@ new ValidatedMethod({
  ╩  └─┘└─┘┴─┘┴└─┘┴ ┴ ┴ ┴└─┘┘└┘└─┘
  */
 
-Meteor.publish('prayerRequests.all', function () { //
+Meteor.publish('prayerRequests.recent', function () { //
   if (Roles.userIsInRole(this.userId, ['member', 'admin', 'zedeck'])) {
-    return PrayerRequestsCollection.find({})
+    return PrayerRequestsCollection.find({}, {
+      sort: {createdAt: -1},
+      limit: 100
+    })
   }
 
   return this.ready()

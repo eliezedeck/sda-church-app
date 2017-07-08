@@ -68,26 +68,7 @@
         </div>
       </div>
       <div class="col-md-5">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-            <tr>
-              <th>Request list</th>
-              <th>Views </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Title of the prayer request</td>
-              <td>45 </td>
-            </tr>
-            <tr>
-              <td>Cell 3</td>
-              <td>45 </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <PrayerRequestsList :list="prayerRequests"></PrayerRequestsList>
       </div>
     </div>
   </div>
@@ -95,6 +76,9 @@
 
 <script>
   import PrayerRequestForm from './forms/PrayerRequestForm.vue'
+  import PrayerRequestsCollection from 'server/collections/prayerRequests'
+
+  import List from './lists/PrayerRequestsList.vue'
 
   export default {
     name: 'PrayerRequests',
@@ -105,6 +89,17 @@
       }
     },
 
+    meteor: {
+      $subscribe: {
+        'prayerRequests.recent': []
+      },
+
+      prayerRequests() {
+        // Inherit the sorting order by the server
+        return PrayerRequestsCollection.find()
+      }
+    },
+
     computed: {
     },
 
@@ -112,7 +107,8 @@
     },
 
     components: {
-      PrayerRequestForm
+      PrayerRequestForm,
+      'PrayerRequestsList': List
     }
   }
 </script>
