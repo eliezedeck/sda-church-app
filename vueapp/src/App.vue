@@ -29,12 +29,12 @@
 
               <li v-if="auth.user">
                 <a @click.prevent="logout" href="#">
-                  <i class="glyphicon glyphicon-user"></i> <strong>Se déconnecter</strong>
+                  <i class="glyphicon glyphicon-user"></i> <strong>Logout</strong>
                 </a>
               </li>
               <li v-else="">
                 <a @click.prevent="$router.push('/auth')" href="#" style="color: indianred">
-                  <i class="glyphicon glyphicon-user"></i> <strong>S'identifier</strong>
+                  <i class="glyphicon glyphicon-user"></i> <strong>Sign-in</strong>
                 </a>
               </li>
             </ul>
@@ -91,9 +91,8 @@
 </script>
 
 <style>
-  .navigation-clean {
-    padding-top: 0;
-    padding-bottom: 0;
+  p.help-block {
+    font-size: 80%;
   }
 
   /* Spin */

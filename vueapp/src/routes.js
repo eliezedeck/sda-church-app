@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import Home from './components/Home.vue'
 import Authentication from './components/Authentication.vue'
 import Registered from './components/Registered.vue'
-import Articles from './components/Articles.vue'
+import PrayerRequests from './components/PrayerRequests.vue'
 
 import AdminUsers from './components/Admin--Users.vue'
 
@@ -12,7 +12,6 @@ Vue.use(Router)
 
 
 /* TAG: i18n */
-
 export const routes = [
   {
     path: '/',
@@ -40,11 +39,11 @@ export const routes = [
   },
 
   {
-    highlight: '/articles/',
-    path: '/articles/:section',
-    label: 'Articles',
-    link: '/articles/types',
-    component: Articles
+    highlight: '/prayer-requests',
+    path: '/prayer-requests/:selectedId?',
+    label: 'Prayer Requests',
+    link: '/prayer-requests',
+    component: PrayerRequests
   }
 ]
 

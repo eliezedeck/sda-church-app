@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
-        <h1>Félicitation! </h1>
-        <p>Vous venez de créer un compte. Vous pouvez maintenant commencer à utiliser l&#39;application.</p>
-        <p>Souvenez-vous bien de votre Identifiant/Pseudo/Login et votre Mot de passe. Ne <strong>jamais partager son mot de passe</strong> avec qui que ce soit!</p>
-        <p>À la prochaine fois, il vous suffira de vous identifier avec votre Pseudo et mot de passe. Il est interdit de créer plusieurs comptes. Au cas où vous obliez votre mot de passe ou votre identifiant, veuillez plut^ot contacter votre supérieur.</p>
+      <div class="col-md-12 text-center">
+        <h1>Congratulations!</h1>
+        <p>You have just finished creating an account to use with the application.</p>
+        <p>Make sure that you remember your Username/Pseudo and password. <strong>Never share your password</strong> to anyone.</p>
+        <p>You are not allowed to create multiple accounts. If you happen to still forget your password, please contact an Administrator.</p>
 
-        <p class="lead">Pour commencer, contactez votre supérieur pour avoir le droit d'utiliser les differentes sections de l'application. Après, utilisez les menus pour accedez aux fonctionalités.</p>
+        <p class="lead">To start, you may need to contact an Administrator to confirm your identify. Afterwards, you can use the menus to use the application.</p>
       </div>
     </div>
   </div>
