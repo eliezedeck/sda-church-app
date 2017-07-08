@@ -2,14 +2,12 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from './components/Home.vue'
-import Authentication from './components/Authentication.vue'
-import Registered from './components/Registered.vue'
-import PrayerRequests from './components/PrayerRequests.vue'
-
-import AdminUsers from './components/Admin--Users.vue'
 
 Vue.use(Router)
 
+function load(component) {
+  return () => import(`./components/${component}.vue`)
+}
 
 /* TAG: i18n */
 export const routes = [
@@ -20,22 +18,17 @@ export const routes = [
 
   {
     path: '/auth',
-    component: Authentication
+    component: load('Authentication')
   },
 
   {
     path: '/auth/registered',
-    component: Registered
+    component: load('Registered')
   },
 
   {
-    path: '/admin/users',
-    component: AdminUsers
-  },
-
-  {
-    path: '/admin/users/:userId',
-    component: AdminUsers
+    path: '/admin/users/:userId?',
+    component: load('Admin--Users')
   },
 
   {
@@ -43,7 +36,7 @@ export const routes = [
     path: '/prayer-requests/:selectedId?',
     label: 'Prayer Requests',
     link: '/prayer-requests',
-    component: PrayerRequests
+    component: load('PrayerRequests')
   }
 ]
 
