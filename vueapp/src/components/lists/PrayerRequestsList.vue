@@ -9,7 +9,7 @@
       </thead>
       <tbody>
       <tr v-for="request in list">
-        <td class="clipped">{{request.content}}</td>
+        <td class="clipped" v-html="markedFirstLine(request.content)"></td>
         <td class="text-right">{{request.viewsCount}}</td>
       </tr>
       </tbody>
@@ -18,8 +18,12 @@
 </template>
 
 <script>
+  import {MarkedMixin} from '../../data/marked.js'
+
   export default {
     name: 'PrayerRequestsList',
+
+    mixins: [MarkedMixin],
 
     props: {
       list: {

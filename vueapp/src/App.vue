@@ -93,11 +93,16 @@
 <style>
   /* This should be used inside a table td/th, where the table has a table-layout: fixed CSS and each of the cells has
    * a predefined length (unit or percentage). Obviously, using the td element directly also works. */
-  div.clipped, td.clipped {
+  div.clipped, td.clipped, td.clipped > * {
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /* For markdown paragraphs */
+  p:last-child {
+    margin-bottom: 0;
   }
 
   p.help-block {
