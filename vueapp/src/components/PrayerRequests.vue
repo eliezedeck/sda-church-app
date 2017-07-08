@@ -69,6 +69,7 @@
       </div>
       <div class="col-md-5">
         <PrayerRequestsList
+            :ready="$subReady['prayerRequests.recent']"
             :list="prayerRequests"
             @selected="onPrayerRequestSelected"
             :selectedId="selectedPrayerRequestId" />
