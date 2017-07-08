@@ -15,6 +15,10 @@ const documentSchema = new SimpleSchema({
     max: 4096
   },
 
+  anonymous: {
+    type: Boolean
+  },
+
   createdBy: {
     type: String,
     min: 17,
@@ -68,6 +72,8 @@ new ValidatedMethod({
     doc.viewsCount = 0
     doc.createdBy = this.userId
     doc.createdAt = new Date()
+    if (doc.anonymous)
+      delete doc.createdBy
 
     try {
       return PrayerRequestsCollection.insertOne(doc)
