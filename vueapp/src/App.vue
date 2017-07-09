@@ -107,6 +107,7 @@
 
   p.help-block {
     font-size: 80%;
+    color: darkgrey;
   }
 
   /* Spin */

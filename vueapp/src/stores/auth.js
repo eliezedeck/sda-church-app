@@ -8,6 +8,7 @@ export default {
   state: {
     initialized: false,
     user: null,
+    userId: '',
     isZedeck: false,
     isAdmin: false,
     isChurchClerk: false,
@@ -21,6 +22,7 @@ export default {
         if (user !== null) {
           // Logged-in
           state.user = user
+          state.userId = user._id
           state.isZedeck = Roles.userIsInRole(user._id, ['zedeck'])
           state.isAdmin = Roles.userIsInRole(user._id, ['admin'])
           state.isChurchClerk = Roles.userIsInRole(user._id, ['church-clerk'])
@@ -28,6 +30,7 @@ export default {
         }
         else {
           state.user = null
+          state.userId = ''
           state.isZedeck = false
           state.isAdmin = null
           state.isChurchClerk = null

@@ -6,13 +6,20 @@
       <div class="col-md-7">
         <div role="group" class="btn-group" style="margin-bottom: 1em">
           <button @click="showPrayerForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
-          <button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
         </div>
         <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false"></PrayerRequestForm>
 
         <template v-if="selectedPrayerRequestObj">
-          <h4>
-            <button class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button> &mdash; Request by ...</h4>
+          <h4 style="margin-top: 0">
+            <div v-if="selectedPrayerRequestObj.createdBy === auth.userId" role="group" class="btn-group">
+              <button class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
+              <button class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
+              &nbsp;&mdash;
+            </div>
+            <span v-if="selectedPrayerRequestObj.createdBy === auth.userId">A request by <strong>You</strong></span>
+            <span v-if="selectedPrayerRequestObj.anonymous">Anonymous prayer request</span>
+            <span v-if="!selectedPrayerRequestObj.anonymous && selectedPrayerRequestObj.createdBy !== auth.userId">A request by ...</span>
+          </h4>
           <div v-html="marked(selectedPrayerRequestObj.content)"></div>
 
           <hr />
