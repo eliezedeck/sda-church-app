@@ -101,6 +101,8 @@ new ValidatedMethod({
     const pr = PrayerRequestsCollection.findOne(id)
     if (!pr)
       throw new Meteor.Error(400, "Prayer request not found")
+    if (pr.anonymous)
+      throw new Meteor.Error(403, "Not authorized. Anonymous prayer request.")
     if (this.userId !== pr.createdBy && !Roles.userIsInRole(this.userId, ['admin', 'zedeck']))
       throw new Meteor.Error(403, "Not authorized. Prayer request doesn't belong to you.")
 

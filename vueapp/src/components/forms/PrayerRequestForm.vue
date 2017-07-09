@@ -33,6 +33,8 @@
   export default {
     name: 'PrayerRequestForm',
 
+    props: ['editObj'],
+
     mixins: [
       getFormHelperMixin({
         base: {

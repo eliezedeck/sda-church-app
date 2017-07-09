@@ -5,14 +5,14 @@
         <h3>Prayer requests</h3></div>
       <div class="col-md-7">
         <div role="group" class="btn-group" style="margin-bottom: 1em">
-          <button @click="showPrayerForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
+          <button @click="$router.push('/prayer-requests'); showPrayerForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
         </div>
-        <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false"></PrayerRequestForm>
+        <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false" :editObj="selectedPrayerRequestObj"></PrayerRequestForm>
 
-        <template v-if="selectedPrayerRequestObj">
+        <template v-if="selectedPrayerRequestObj && !showPrayerForm">
           <h4 style="margin-top: 0">
             <div v-if="selectedPrayerRequestObj.createdBy === auth.userId" role="group" class="btn-group">
-              <button class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
+              <button @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
               <button class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
               &nbsp;&mdash;
             </div>
@@ -135,6 +135,7 @@
 
     methods: {
       onPrayerRequestSelected(request) {
+        this.showPrayerForm = false
         if (request)
           this.$router.push(`/prayer-requests/${request._id}`)
         else
