@@ -2,18 +2,19 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <h3>Prayer requests</h3></div>
+        <h3>Prayer requests</h3>
+      </div>
       <div class="col-md-7">
-        <div role="group" class="btn-group" style="margin-bottom: 1em">
+        <div v-if="!showPrayerForm" role="group" class="btn-group" style="margin-bottom: 1em">
           <button @click="$router.push('/prayer-requests'); showPrayerForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
         </div>
         <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false" :editObj="selectedPrayerRequestObj"></PrayerRequestForm>
 
         <template v-if="selectedPrayerRequestObj && !showPrayerForm">
           <h4 style="margin-top: 0">
-            <div v-if="selectedPrayerRequestObj.createdBy === auth.userId" role="group" class="btn-group">
-              <button @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
-              <button class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
+            <div v-if="selectedPrayerRequestObj.createdBy === auth.userId || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
+              <button v-if="selectedPrayerRequestObj.createdBy === auth.userId" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
+              <button v-if="selectedPrayerRequestObj.createdBy === auth.userId || auth.isChurchClerk || auth.isZedeck" class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
               &nbsp;&mdash;
             </div>
             <span v-if="selectedPrayerRequestObj.createdBy === auth.userId">A request by <strong>You</strong></span>
@@ -26,8 +27,8 @@
           <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
           <div role="group"
                class="btn-group" style="margin-bottom: 1em">
-            <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments </button>
-            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony </button>
+            <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
+            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony</button>
             <button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
           </div>
           <div class="well well-sm">
