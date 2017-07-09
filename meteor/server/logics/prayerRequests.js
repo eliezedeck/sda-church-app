@@ -103,7 +103,7 @@ new ValidatedMethod({
       throw new Meteor.Error(400, "Prayer request not found")
     if (pr.anonymous)
       throw new Meteor.Error(403, "Not authorized. Anonymous prayer request.")
-    if (this.userId !== pr.createdBy && !Roles.userIsInRole(this.userId, ['admin', 'zedeck']))
+    if (this.userId !== pr.createdBy && !Roles.userIsInRole(this.userId, ['zedeck']))
       throw new Meteor.Error(403, "Not authorized. Prayer request doesn't belong to you.")
 
     // Override
@@ -116,6 +116,33 @@ new ValidatedMethod({
       return PrayerRequestsCollection.update(id, {
         $set: doc
       })
+    } catch (e) {
+      throw new Meteor.Error(400, e.message)
+    }
+  }
+})
+
+Meteor.methods({
+  'prayerRequests.delete'(params) {
+    new SimpleSchema({
+      id: {
+        type: String,
+        min: 17,
+        max: 17
+      }
+    }).validate(params)
+
+    const {id} = params
+    const pr = PrayerRequestsCollection.findOne(id)
+    if (!pr)
+      throw new Meteor.Error(400, "Prayer request not found")
+    if (pr.anonymous && !Roles.userIsInRole(this.userId, ['church-clerk', 'zedeck']))
+      throw new Meteor.Error(403, "Not authorized. Anonymous prayer request.")
+    if (this.userId !== pr.createdBy && !Roles.userIsInRole(this.userId, ['church-clerk', 'zedeck']))
+      throw new Meteor.Error(403, "Not authorized. Prayer request doesn't belong to you.")
+
+    try {
+      return PrayerRequestsCollection.remove(id)
     } catch (e) {
       throw new Meteor.Error(400, e.message)
     }

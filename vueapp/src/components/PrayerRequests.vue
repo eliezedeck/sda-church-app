@@ -12,19 +12,20 @@
 
         <template v-if="selectedPrayerRequestObj && !showPrayerForm">
           <h4 style="margin-top: 0">
-            <div v-if="selectedPrayerRequestObj.createdBy === auth.userId || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
-              <button v-if="selectedPrayerRequestObj.createdBy === auth.userId" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
-              <button v-if="selectedPrayerRequestObj.createdBy === auth.userId || auth.isChurchClerk || auth.isZedeck" class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
+            <div v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
+              <button v-if="selectedPrayerRequestOwnedByCurrentUser" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
+              <button v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" @click="onDeletePrayerRequest(selectedPrayerRequestObj._id)" class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
               &nbsp;&mdash;
             </div>
-            <span v-if="selectedPrayerRequestObj.createdBy === auth.userId">A request by <strong>You</strong></span>
+            <span v-if="selectedPrayerRequestOwnedByCurrentUser">A request by <strong>You</strong></span>
+            <span v-if="!selectedPrayerRequestObj.anonymous && !selectedPrayerRequestOwnedByCurrentUser">A request by ...</span>
             <span v-if="selectedPrayerRequestObj.anonymous">Anonymous prayer request</span>
-            <span v-if="!selectedPrayerRequestObj.anonymous && selectedPrayerRequestObj.createdBy !== auth.userId">A request by ...</span>
           </h4>
           <div v-html="marked(selectedPrayerRequestObj.content)"></div>
 
-          <hr />
-          <p class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
+          <hr style="margin-bottom: 1em" />
+
+          <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
           <div role="group"
                class="btn-group" style="margin-bottom: 1em">
             <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
@@ -131,6 +132,10 @@
     computed: {
       selectedPrayerRequestId() {
         return this.$route.params['selectedId']
+      },
+
+      selectedPrayerRequestOwnedByCurrentUser() {
+        return !!this.selectedPrayerRequestObj && this.selectedPrayerRequestObj.createdBy === this.auth.userId
       }
     },
 
@@ -141,6 +146,15 @@
           this.$router.push(`/prayer-requests/${request._id}`)
         else
           this.$router.push(`/prayer-requests`)
+      },
+
+      onDeletePrayerRequest(id) {
+        this.$router.replace(`/prayer-requests`)
+        Meteor.call('prayerRequests.delete', {id}, (err) => {
+          if (err) {
+            window.alert(err.message)
+          }
+        })
       }
     },
 
