@@ -18,7 +18,7 @@
           </h4>
           <div v-html="marked(selectedPrayerRequestObj.content)"></div>
           
-          <div v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
+          <div v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group" style="margin-top: 1em">
             <button v-if="selectedPrayerRequestOwnedByCurrentUser" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button">
               <i class="glyphicon glyphicon-pencil"></i> Edit</button>
             <button v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" @click="onDeletePrayerRequest(selectedPrayerRequestObj._id)" class="btn btn-danger btn-xs" type="button">
@@ -28,8 +28,7 @@
           <hr style="margin-bottom: 1em" />
 
           <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
-          <div role="group"
-               class="btn-group" style="margin-bottom: 1em">
+          <div role="group" class="btn-group" style="margin-bottom: 1em">
             <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
             <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony</button>
             <button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
@@ -103,6 +102,11 @@
     name: 'PrayerRequests',
 
     mixins: [MarkedMixin],
+
+    beforeDestroy() {
+      if (this._incrementViewTimer)
+        clearTimeout(this._incrementViewTimer)
+    },
 
     data() {
       return {
