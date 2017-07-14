@@ -31,7 +31,7 @@
 
               <hr style="margin-bottom: 1em" />
 
-              <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
+              <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a @click.prevent="console.log('Not yet implemented')" href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
               <div role="group" class="btn-group" style="margin-bottom: 1em">
                 <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
                 <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony</button>
