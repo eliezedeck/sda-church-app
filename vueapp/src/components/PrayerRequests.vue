@@ -19,7 +19,7 @@
 
         <div slot="content">
           <div class="col-md-7">
-            <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false" :editObj="selectedPrayerRequestObj"></PrayerRequestForm>
+            <RequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false" :editObj="selectedPrayerRequestObj"></RequestForm>
 
             <template v-if="selectedPrayerRequestObj && !showPrayerForm">
               <h4 style="margin-top: 0">
@@ -31,9 +31,9 @@
 
               <hr style="margin-bottom: 1em" />
 
-              <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help use to moderate the content of this Website by <a @click.prevent="console.log('Not yet implemented')" href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
+              <p v-if="!selectedPrayerRequestOwnedByCurrentUser" class="help-block" style="margin-top: 0">Do you think that this is not a Prayer request or it contains inappropriate contents? Help us to moderate the content of this Website by <a @click.prevent="console.log('Not yet implemented')" href="#"><i class="glyphicon glyphicon-flag"></i> flagging</a> this request.</p>
               <div role="group" class="btn-group" style="margin-bottom: 1em">
-                <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
+                <button @click="showCommentForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Comments</button>
                 <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus"></i> Testimony</button>
                 <button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i> God has answered this Prayer !</button>
               </div>
@@ -54,19 +54,12 @@
                   </div>
                 </form>
               </div>
-              <div class="well well-sm">
-                <form>
-                  <div class="form-group">
-                    <label class="control-label">Your comments</label>
-                    <textarea rows="4" placeholder="Encourage, give information, ..." class="form-control"></textarea>
-                    <p class="help-block">Text is in &quot;Markdown&quot; notation</p>
-                  </div>
-                  <div role="group" class="btn-group">
-                    <button class="btn btn-primary" type="button">Add my Comments</button>
-                    <button class="btn btn-default" type="button">Cancel </button>
-                  </div>
-                </form>
-              </div>
+
+              <CommentForm
+                  v-if="showCommentForm"
+                  :prayerRequestId="selectedPrayerRequestObj._id"
+                  @dismiss="showCommentForm = false"></CommentForm>
+
               <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
               <div class="table-responsive">
                 <table class="table table-striped">
@@ -100,7 +93,8 @@
 </template>
 
 <script>
-  import PrayerRequestForm from './forms/PrayerRequestForm.vue'
+  import RequestForm from './forms/PrayerRequestForm.vue'
+  import CommentForm from './forms/PrayerRequestCommentForm.vue'
   import PrayerRequestsCollection from 'server/collections/prayerRequests'
 
   import List from './lists/PrayerRequestsList.vue'
@@ -118,7 +112,8 @@
 
     data() {
       return {
-        showPrayerForm: false
+        showPrayerForm: false,
+        showCommentForm: false
       }
     },
 
@@ -204,7 +199,8 @@
     },
 
     components: {
-      PrayerRequestForm,
+      RequestForm,
+      CommentForm,
       'PrayerRequestsList': List
     }
   }

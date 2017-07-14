@@ -3,10 +3,10 @@
       :disabled="inProgress || disabled"
       :class="className" type="submit">
     <span v-if="inProgress">
-      <i v-if="inProgress" class="glyphicon glyphicon-refresh spin"></i>&nbsp;&nbsp;Patientez ...
+      <i v-if="inProgress" class="glyphicon glyphicon-refresh spin"></i>&nbsp;&nbsp;Please wait ...
     </span>
     <span v-else="">
-      <slot><i class="glyphicon glyphicon-floppy-save"></i> Enregistrer</slot>
+      <slot><i class="glyphicon glyphicon-floppy-save"></i> Save</slot>
     </span>
   </button>
 </template>

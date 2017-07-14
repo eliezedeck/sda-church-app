@@ -69,8 +69,14 @@ Meteor.methods({
       if (!Roles.userIsInRole(this.userId, ['member']))
         throw ERROR_REQUIRES_MEMBER_ROLE
 
+      // Transform
+      doc.createdBy = this.userId
+      doc.createdAt = new Date()
+
       return PrayerRequestCommentsCollection.insert(doc)
     } catch (e) {
+      if (e instanceof Meteor.Error)
+        throw e
       throw new Meteor.Error(400, e.message)
     }
   }

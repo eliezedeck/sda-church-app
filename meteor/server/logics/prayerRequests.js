@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor'
 import PrayerRequestsCollection from '../collections/prayerRequests'
 import SimpleSchema from 'simpl-schema'
+import {ERROR_REQUIRES_MEMBER_ROLE} from '../errors'
 
 /*
  ╔═╗┌─┐┬ ┬┌─┐┌┬┐┌─┐
@@ -97,7 +98,7 @@ new ValidatedMethod({
   }).validator(),
   run({ id, doc }) {
     if (!Roles.userIsInRole(this.userId, ['member']))
-      throw new Meteor.Error(403, "Not authorized. Please ask an administrator to validate who you are.")
+      throw ERROR_REQUIRES_MEMBER_ROLE
     const pr = PrayerRequestsCollection.findOne(id)
     if (!pr)
       throw new Meteor.Error(400, "Prayer request not found")
