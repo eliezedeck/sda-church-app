@@ -146,6 +146,35 @@ Meteor.methods({
     } catch (e) {
       throw new Meteor.Error(400, e.message)
     }
+  },
+
+  'prayerRequests.incrementViews'(params) {
+    try {
+      new SimpleSchema({
+        id: {
+          type: String,
+          min: 17,
+          max: 17
+        }
+      }).validate(params)
+    } catch (e) {
+      throw new Meteor.Error(400, e.message)
+    }
+
+    const {id} = params
+
+    if (!Roles.userIsInRole(this.userId, ['member']))
+      throw new Meteor.Error(403, "Not authorized. Please ask an administrator to validate who you are.")
+
+    try {
+      PrayerRequestsCollection.update(id, {
+        $inc: {
+          viewsCount: 1 // increment
+        }
+      })
+    } catch (e) {
+      throw new Meteor.Error(400, e.message)
+    }
   }
 })
 

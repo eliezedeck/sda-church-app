@@ -133,7 +133,38 @@
 
     computed: {
       selectedPrayerRequestId() {
-        return this.$route.params['selectedId']
+        const selectedId = this.$route.params['selectedId']
+        if (selectedId) {
+          if (this._previouslySelectedId !== selectedId) {
+            // Selection has changed
+            this._previouslySelectedId = selectedId
+
+            // Clear the previous timer
+            if (this._incrementViewTimer)
+              clearTimeout(this._incrementViewTimer)
+
+            // Start a new timer
+            this._incrementViewTimer = setTimeout(() => {
+              // Increment the views for the selected prayer request
+              Meteor.call('prayerRequests.incrementViews', {id: selectedId}, (err) => {
+                if (err) {
+                  console.error(`There was a problem incrementing the views for the prayer request ${selectedId}: ${err.message}`)
+                } else {
+                  console.log(`Incremented the views count for prayer request ${selectedId}`)
+                }
+              })
+            }, 15000)
+          }
+        }
+        else {
+          this._previouslySelectedId = null
+          if (this._incrementViewTimer) {
+            clearTimeout(this._incrementViewTimer)
+            this._incrementViewTimer = null
+          }
+        }
+
+        return selectedId
       },
 
       selectedPrayerRequestOwnedByCurrentUser() {
