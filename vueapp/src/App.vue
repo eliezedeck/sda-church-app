@@ -44,7 +44,7 @@
       </nav>
     </div>
 
-    <div id="master-content" style="margin-top: 3.65em;">
+    <div id="master-content">
       <router-view v-if="auth.initialized"></router-view>
 
       <div v-else class="container">
@@ -92,6 +92,21 @@
 </script>
 
 <style>
+  div#master-content {
+    margin-top: 3.65em;
+  }
+
+  .navigation-clean {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .navbar {
+    -webkit-box-shadow: 0 0 5px 0 rgba(0,0,0,0.75);
+    -moz-box-shadow: 0 0 5px 0 rgba(0,0,0,0.75);
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.75);
+  }
+
   /* This should be used inside a table td/th, where the table has a table-layout: fixed CSS and each of the cells has
    * a predefined length (unit or percentage). Obviously, using the td element directly also works. */
   div.clipped, td.clipped, td.clipped > * {
@@ -127,5 +142,9 @@
 
   i.spin {
     animation: spin 5s infinite linear;
+  }
+
+  tr.active > td {
+    background-color: rgba(255, 168, 00, 0.3) !important;
   }
 </style>
