@@ -9,6 +9,7 @@ import store from './stores'
 import './directives'
 import './filters'
 import './data/meteor'
+import './mixins'
 
 
 // the vue-meteor-tracker assumes Meteor stuffs are available globally
