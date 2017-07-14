@@ -13,7 +13,7 @@
                   <strong style="color: orangered">Administration</strong> <span class="caret"></span>
                 </a>
                 <ul role="menu" class="dropdown-menu">
-                  <li role="presentation"><router-link to="/admin/users">Members</router-link></li>
+                  <li role="presentation"><router-link to="/admin/members">Members</router-link></li>
                 </ul>
               </li>
 
@@ -21,6 +21,7 @@
                 <li
                     v-for="link in links"
                     v-if="link.label"
+                    :key="link.link"
                     :class="{active: link.highlight && currentRoutePath.indexOf(link.highlight) !== -1}"
                     role="presentation">
                   <router-link :to="link.link">{{link.label}}</router-link>
@@ -32,7 +33,7 @@
                   <i class="glyphicon glyphicon-user"></i> <strong>Logout</strong>
                 </a>
               </li>
-              <li v-else="">
+              <li v-else>
                 <a @click.prevent="$router.push('/auth')" href="#" style="color: indianred">
                   <i class="glyphicon glyphicon-user"></i> <strong>Sign-in</strong>
                 </a>
@@ -46,7 +47,7 @@
     <div id="master-content" style="margin-top: 3.65em;">
       <router-view v-if="auth.initialized"></router-view>
 
-      <div v-else="" class="container">
+      <div v-else class="container">
         <div class="row">
           <div class="col-md-12 text-center">
             <h1><i class="glyphicon glyphicon-refresh spin"></i>&nbsp;&nbsp;Connexion avec le serveur ...</h1>

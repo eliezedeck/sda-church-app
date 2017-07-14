@@ -25,8 +25,9 @@
             <tbody>
             <tr
                 v-for="user in users"
-                @click="$router.push(`/admin/users/${user._id}`); showAuthProfileForm = false"
+                :key="user._id"
                 :class="{active: selectedUserId === user._id}"
+                @click="$router.push(`/admin/members/${user._id}`), showAuthProfileForm = false"
             >
               <td>{{user.profile.displayName}} <small>({{user.username}})</small></td>
               <td><strong>{{user.profile.fullName}}</strong></td>

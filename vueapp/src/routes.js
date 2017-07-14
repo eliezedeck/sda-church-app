@@ -27,8 +27,8 @@ export const routes = [
   },
 
   {
-    path: '/admin/users/:userId?',
-    component: load('Admin--Users')
+    path: '/admin/members/:userId?',
+    component: load('Members')
   },
 
   {
