@@ -6,22 +6,24 @@
       </div>
       <div class="col-md-7">
         <div v-if="!showPrayerForm" role="group" class="btn-group" style="margin-bottom: 1em">
-          <button @click="$router.push('/prayer-requests'); showPrayerForm = true" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
+          <button @click="showPrayerForm = true, $router.push('/prayer-requests')" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-plus"></i> Prayer Request</button>
         </div>
         <PrayerRequestForm v-if="showPrayerForm" @dismiss="showPrayerForm = false" :editObj="selectedPrayerRequestObj"></PrayerRequestForm>
 
         <template v-if="selectedPrayerRequestObj && !showPrayerForm">
           <h4 style="margin-top: 0">
-            <div v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
-              <button v-if="selectedPrayerRequestOwnedByCurrentUser" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
-              <button v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" @click="onDeletePrayerRequest(selectedPrayerRequestObj._id)" class="btn btn-danger btn-xs" type="button"><i class="glyphicon glyphicon-remove"></i> Remove</button>
-              &nbsp;&mdash;
-            </div>
             <span v-if="selectedPrayerRequestOwnedByCurrentUser">A request by <strong>You</strong></span>
             <span v-if="!selectedPrayerRequestObj.anonymous && !selectedPrayerRequestOwnedByCurrentUser">A request by ...</span>
             <span v-if="selectedPrayerRequestObj.anonymous">Anonymous prayer request</span>
           </h4>
           <div v-html="marked(selectedPrayerRequestObj.content)"></div>
+          
+          <div v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" role="group" class="btn-group">
+            <button v-if="selectedPrayerRequestOwnedByCurrentUser" @click="showPrayerForm = true" class="btn btn-warning btn-xs" type="button">
+              <i class="glyphicon glyphicon-pencil"></i> Edit</button>
+            <button v-if="selectedPrayerRequestOwnedByCurrentUser || auth.isChurchClerk || auth.isZedeck" @click="onDeletePrayerRequest(selectedPrayerRequestObj._id)" class="btn btn-danger btn-xs" type="button">
+              <i class="glyphicon glyphicon-remove"></i> Remove</button>
+          </div>
 
           <hr style="margin-bottom: 1em" />
 
