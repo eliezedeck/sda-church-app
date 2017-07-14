@@ -81,3 +81,30 @@ Meteor.methods({
     }
   }
 })
+
+
+/*
+ ╔═╗┬ ┬┌┐ ┬  ┬┌─┐┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
+ ╠═╝│ │├┴┐│  ││  ├─┤ │ ││ ││││└─┐
+ ╩  └─┘└─┘┴─┘┴└─┘┴ ┴ ┴ ┴└─┘┘└┘└─┘
+ */
+
+Meteor.publish('prayerRequestComments.forPrayerId', function (params) { //
+  if (Roles.userIsInRole(this.userId, ['member'])) {
+    new SimpleSchema({
+      prayerRequestId: {
+        type: String,
+        min: 17,
+        max: 17
+      }
+    }).validate(params)
+
+    const {prayerRequestId} = params
+    return PrayerRequestCommentsCollection.find({prayerRequestId}, {
+      limit: 40
+    })
+  }
+
+  return this.ready()
+})
+

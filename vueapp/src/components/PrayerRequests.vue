@@ -45,20 +45,9 @@
                   @dismiss="showCommentForm = false"></CommentForm>
 
               <p>I would like to <a href="#">Pray</a> for this request. Thank you for supporting Tiana by praying for his request.</p>
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <tbody>
-                  <tr>
-                    <td> <a href="#">Delete this comment</a></td>
-                    <td>Cell 2</td>
-                  </tr>
-                  <tr>
-                    <td>By sdfjklm</td>
-                    <td>Cell 4</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
+
+              <CommentsList
+                  :prayerRequestId="selectedPrayerRequestObj._id"></CommentsList>
             </template>
           </div>
           <div class="col-md-5">
@@ -82,6 +71,7 @@
   import PrayerRequestsCollection from 'server/collections/prayerRequests'
 
   import List from './lists/PrayerRequestsList.vue'
+  import CommentsList from './lists/PrayerRequestCommentsList.vue'
   import {MarkedMixin} from '../data/marked.js'
 
   export default {
@@ -185,7 +175,8 @@
     components: {
       RequestForm,
       CommentForm,
-      'PrayerRequestsList': List
+      'PrayerRequestsList': List,
+      CommentsList
     }
   }
 </script>
