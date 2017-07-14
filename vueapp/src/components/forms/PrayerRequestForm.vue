@@ -3,7 +3,7 @@
     <form @submit.prevent.stop="onSubmit">
       <div class="form-group">
         <label class="control-label">Your prayer request</label>
-        <textarea v-model="content" rows="6" class="form-control input"></textarea>
+        <textarea v-focus v-model="content" rows="6" class="form-control input"></textarea>
         <p class="help-block">Text is in &quot;Markdown&quot; notation</p>
       </div>
       <div class="checkbox">
