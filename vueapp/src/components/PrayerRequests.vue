@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
 
-      <toolbar-content>
+      <toolbar-and-content>
 
         <div slot="toolbar" class="col-md-12">
           <h3>
@@ -86,7 +86,7 @@
           </div>
         </div>
 
-      </toolbar-content>
+      </toolbar-and-content>
 
     </div>
   </div>
