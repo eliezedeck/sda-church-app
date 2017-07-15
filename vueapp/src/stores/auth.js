@@ -41,13 +41,11 @@ export default {
   }
 }
 
-export const watchAuthMixin = {
-  created() {
-    Tracker.autorun(() => {
-      const user = Meteor.user()
-      this.$store.commit('auth/updateUser', {user})
-    })
-  }
+export function watchAuth(vm) {
+  Tracker.autorun(() => {
+    const user = Meteor.user()
+    vm.$store.commit('auth/updateUser', {user})
+  })
 }
 
 export const authForTemplateMixin = {
