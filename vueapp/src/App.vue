@@ -28,7 +28,7 @@
                 </li>
               </template>
 
-              <li v-if="auth.user">
+              <li v-if="authedUser">
                 <a @click.prevent="logout" href="#">
                   <i class="glyphicon glyphicon-user"></i> <strong>Logout</strong>
                 </a>
@@ -64,11 +64,16 @@
   import {Meteor} from 'meteor/meteor'
   import {routes} from './routes'
 
-  import {watchAuthMixin} from './stores/auth.js'
+  import {watchAuth} from './stores/auth.js'
+  import {watchUsers} from './stores/data/members.js'
 
   export default {
     name: 'App',
-    mixins: [watchAuthMixin],
+
+    created() {
+      watchAuth(this)
+      watchUsers(this)
+    },
 
     data() {
       return {
@@ -77,8 +82,29 @@
     },
 
     computed: {
+      // This is mainly a way to check the authenticated user at any stage (created, updated, ...)
+      authedUser() {
+        const user = this.$store.state.auth.user
+
+        if (user) {
+          if (!this._subscriptionInitialized) {
+            this._subscriptionInitialized = true
+
+            // Begin subscriptions
+            this.$subscribe('users.all')
+            console.log('Streaming data ...')
+          }
+        }
+
+        return user
+      },
+
       currentRoutePath() {
         return this.$route.path
+      },
+
+      allSubsReady() {
+        return !!this.$subReady['users.all']
       }
     },
 
