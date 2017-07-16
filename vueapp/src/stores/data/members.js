@@ -27,3 +27,11 @@ export function watchUsers(vm) {
     vm.$store.commit('data/members/update', users)
   })
 }
+
+export const membersMixin = {
+  meteor: {
+    membersLookup() {
+      return this.$store.state.data.members.lookup
+    }
+  }
+}

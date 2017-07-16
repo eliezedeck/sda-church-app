@@ -5,7 +5,9 @@
       <tr v-for="comment in comments" :key="comment._id">
         <td>
           <div v-html="marked(comment.content)"></div>
-          <a href="#">Delete this comment</a>
+          <div class="text-right">
+            <small>posted by <member :memberObj="lo.get(membersLookup, [comment.createdBy], {})"></member> (<a @click.prevent="console.log('Net yet implemented')" href="#">Delete</a>)</small>
+          </div>
         </td>
       </tr>
       </tbody>
@@ -16,11 +18,12 @@
 <script>
   import PrayerRequestCommentsCollection from 'server/collections/prayerRequestComments'
   import {MarkedMixin} from '../../data/marked.js'
+  import {membersMixin} from '../../stores/data/members.js'
 
   export default {
     name: 'PrayerRequestCommentsList',
 
-    mixins: [MarkedMixin],
+    mixins: [MarkedMixin, membersMixin],
 
     props: {
       prayerRequestId: {
