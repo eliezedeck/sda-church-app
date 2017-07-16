@@ -45,7 +45,7 @@
     </div>
 
     <div id="master-content">
-      <router-view v-if="auth.initialized"></router-view>
+      <router-view v-if="auth.initialized && allSubsReady"></router-view>
 
       <div v-else class="container">
         <div class="row">
