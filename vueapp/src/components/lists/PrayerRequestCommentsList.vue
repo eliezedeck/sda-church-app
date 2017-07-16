@@ -5,9 +5,12 @@
       <tr v-for="comment in comments" :key="comment._id">
         <td>
           <div v-html="marked(comment.content)"></div>
-          <div class="text-right">
-            <small>posted by <member :memberObj="lo.get(membersLookup, [comment.createdBy], {})"></member> (<a @click.prevent="console.log('Net yet implemented')" href="#">Delete</a>)</small>
-          </div>
+          <p class="help-block text-right">
+            <span v-if="auth.user._id === comment.createdBy">You</span>
+            <member v-else :memberObj="lo.get(membersLookup, [comment.createdBy], {})" />
+            posted this on {{comment.createdAt | nice-date}}
+            <span v-if="isAllowedToDeleteComment(comment)">(<a @click.prevent="onDeleteComment(comment._id)" href="#" style="color: red">Delete</a>)</span>
+          </p>
         </td>
       </tr>
       </tbody>
@@ -48,6 +51,22 @@
             prayerRequestId: id
           })
         }
+      }
+    },
+
+    methods: {
+      onDeleteComment(id) {
+        Meteor.call('prayerRequestComments.remove', {id}, (err) => {
+          if (err) {
+            window.alert(err.message)
+          }
+        })
+      },
+
+      isAllowedToDeleteComment(comment) {
+        return comment.createdBy === this.auth.user._id ||
+            this.auth.isChurchClerk ||
+            this.auth.isZedeck
       }
     }
   }

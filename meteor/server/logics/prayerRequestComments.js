@@ -1,7 +1,7 @@
 import {Meteor} from 'meteor/meteor'
 import PrayerRequestCommentsCollection from '../collections/prayerRequestComments'
 import SimpleSchema from 'simpl-schema'
-import {ERROR_REQUIRES_MEMBER_ROLE} from '../errors'
+import {ERROR_NOT_YOURS, ERROR_UNAUTHORIZED, ERROR_REQUIRES_MEMBER_ROLE} from '../errors'
 
 /*
  ╔═╗┌─┐┬ ┬┌─┐┌┬┐┌─┐
@@ -74,6 +74,37 @@ Meteor.methods({
       doc.createdAt = new Date()
 
       return PrayerRequestCommentsCollection.insert(doc)
+    } catch (e) {
+      if (e instanceof Meteor.Error)
+        throw e
+      throw new Meteor.Error(400, e.message)
+    }
+  },
+
+  'prayerRequestComments.remove'(params) {
+    try {
+      // Input
+      new SimpleSchema({
+        id: {
+          type: String,
+          min: 17,
+          max: 17
+        }
+      }).validate(params)
+      const {id} = params
+
+      // Validations
+      if (!Roles.userIsInRole(this.userId, ['member', 'church-clerk', 'zedeck']))
+        throw ERROR_UNAUTHORIZED
+      const comment = PrayerRequestCommentsCollection.findOne(id)
+      if (comment) {
+        if (comment.createdBy !== this.userId && !Roles.userIsInRole(this.userId, ['church-clerk', 'zedeck']))
+          throw ERROR_NOT_YOURS
+
+        PrayerRequestCommentsCollection.remove(id)
+      }
+
+      // Silently ignore if the comment is not found
     } catch (e) {
       if (e instanceof Meteor.Error)
         throw e
