@@ -104,6 +104,8 @@
       },
 
       allSubsReady() {
+        if (!this._subscriptionInitialized)
+          return true
         return !!this.$subReady['users.all']
       }
     },
