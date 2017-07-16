@@ -132,6 +132,7 @@ Meteor.publish('prayerRequestComments.forPrayerId', function (params) { //
 
     const {prayerRequestId} = params
     return PrayerRequestCommentsCollection.find({prayerRequestId}, {
+      sort: {createdAt: -1},
       limit: 40
     })
   }

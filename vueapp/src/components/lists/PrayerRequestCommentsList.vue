@@ -49,6 +49,8 @@
         update({id}) {
           return PrayerRequestCommentsCollection.find({
             prayerRequestId: id
+          }, {
+            sort: {createdAt: -1},
           })
         }
       }
