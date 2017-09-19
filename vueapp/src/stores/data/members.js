@@ -29,7 +29,7 @@ export function watchUsers(vm) {
 }
 
 export const membersMixin = {
-  meteor: {
+  computed: {
     membersLookup() {
       return this.$store.state.data.members.lookup
     }
