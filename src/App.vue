@@ -30,15 +30,10 @@
           </div>
           <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
-              <li role="presentation" class="active"><a href="#">Announcements</a></li>
-              <li role="presentation"><router-link to="/prayers">Prayers</router-link></li>
-              <li role="presentation"><a href="#">Votes </a></li>
-              <li class="dropdown"><a data-toggle="dropdown" aria-expanded="false" href="#" class="dropdown-toggle">Departments <span class="caret"></span></a>
-                <ul role="menu" class="dropdown-menu">
-                  <li role="presentation"><a href="#">First Item</a></li>
-                  <li role="presentation"><a href="#">Second Item</a></li>
-                  <li role="presentation"><a href="#">Third Item</a></li>
-                </ul>
+              <li v-for="menu in menus"
+                  :key="menu.url"
+                  role="presentation" :class="{active: activeUrl === menu.url}">
+                <router-link :to="menu.url">{{menu.label}}</router-link>
               </li>
             </ul>
           </div>
@@ -74,10 +69,25 @@
   import {SAuth} from './stores/auth'
 
 
+  const menus = [
+    {label: 'Events', url: '/events'},
+    {label: 'Prayers', url: '/prayers'}
+  ]
+
   export default {
     name: 'App',
 
+    data() {
+      return {
+        menus: menus
+      }
+    },
+
     computed: {
+      activeUrl() {
+        return this.$route.path
+      },
+
       memberDisplayName() {
         return SAuth.getters.displayName
       },
