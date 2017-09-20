@@ -183,6 +183,13 @@
       }
     },
 
+    beforeDestroy() {
+      if (this.incrementViewsTimer) {
+        // Clear pending timeout for incrementing Prayers view-count
+        window.clearTimeout(this.incrementViewsTimer)
+      }
+    },
+
     components: {
       PrayerRequestForm,
       PrayersList,
