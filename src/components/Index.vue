@@ -4,8 +4,15 @@
       <div class="col-md-12">
         <h1 class="text-center">October 1st &mdash; <strong>Church Picnic</strong></h1></div>
       <div class="col-md-12">
-        <div role="group" class="btn-group btn-group-justified"><a class="btn btn-primary btn-lg" role="button" href="#"><i class="glyphicon glyphicon-bell"></i> Register today</a></div>
-        <div class="well well-sm">
+        <div v-if="memberHasName && !showRegistrationForm && !alreadyHasRegistration" role="group" class="btn-group btn-group-justified">
+          <a @click.prevent="showRegistrationForm = true" class="btn btn-primary btn-lg" role="button" href="#">
+            <i class="glyphicon glyphicon-bell"></i> Register today
+          </a>
+        </div>
+
+        <p v-if="!memberHasName" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
+
+        <div v-if="showRegistrationForm" class="well well-sm">
           <form>
             <div class="row">
               <div class="col-md-5">
@@ -14,51 +21,59 @@
                 <p>The Church will cover both Transportation and the Entry fees when we get there, but <strong>only</strong> if the person is a Member of the Church or a Sabbath School class.</p>
               </div>
               <div class="col-md-7">
-                <div role="group" class="btn-group" style="margin-bottom: .5em">
-                  <button class="btn btn-info" type="button">Register myself</button>
-                  <button class="btn btn-danger" type="button">Remove </button>
+                <div v-if="!showSubForm" role="group" class="btn-group" style="margin-bottom: .5em">
+                  <button @click="showSubForm = true" class="btn btn-info" type="button">
+                    <template v-if="registrationFromForm.length === 0">Register myself</template>
+                    <template v-else>Register another person</template>
+                  </button>
+                  <button class="btn btn-danger" type="button">Remove</button>
                 </div>
-                <div class="well well-sm" style="background-color:rgb(235,235,235);">
-                  <div class="form-group">
+
+                <div v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
+                  <div v-if="registrationFromForm.length > 0" class="form-group">
                     <label class="control-label">Name of the person</label>
-                    <input type="text" class="form-control" />
+                    <input v-model="subFormData.name" type="text" class="form-control" />
                   </div>
                   <div class="form-group">
                     <label class="control-label">Please check what applies</label>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input type="checkbox" />Need <strong>Special Transportation</strong></label>
+                        <input v-model="subFormData.wantsTransportation" type="checkbox" />Need <strong>Special Transportation</strong></label>
                     </div>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input type="checkbox" />Member of the English-Speaking Church</label>
+                        <input v-model="subFormData.isChurchMember" type="checkbox" />Member of the English-Speaking Church</label>
                     </div>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input type="checkbox" />Registered in one of the English-Speaking Church Sabbath school class</label>
+                        <input v-model="subFormData.isSabbathSchoolMember" type="checkbox" />Registered in one of the English-Speaking Church Sabbath school class</label>
                     </div>
                   </div>
                   <div role="group" class="btn-group">
-                    <button class="btn btn-primary" type="button">Add to the List</button>
-                    <button class="btn btn-default" type="button">Do not add</button>
+                    <button @click.prevent.stop="addPersonToSubform"
+                        :disabled="registrationFromForm.length !== 0 && subFormData.name.length < 2" class="btn btn-primary" type="button">Add to the List</button>
+                    <button @click="showSubForm = false" class="btn btn-default" type="button">Do not add</button>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <table class="table">
                     <thead>
                     <tr>
-                      <th>Name </th>
-                      <th>Fees </th>
+                      <th>Name</th>
+                      <th>Fees</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                      <td>Cell 1</td>
-                      <td>Paid by the Church</td>
-                    </tr>
-                    <tr>
-                      <td>Cell 3</td>
-                      <td>Cell 4</td>
+                    <tr v-for="registration in registrationFromForm">
+                      <td>
+                        <span v-if="registration.name">{{registration.name}}</span>
+                        <span v-if="registration.memberId">{{memberName(registration.memberId)}}</span>
+                      </td>
+                      <td>
+                        <small v-if="registration.isChurchMember || registration.isSabbathSchoolMember" style="color: green">(Covered by the Church)</small>
+                        <span v-else><strong>{{2000 + (registration.wantsTransportation ? 4000 : 0)}}</strong> Ar</span>
+                      </td>
                     </tr>
                     </tbody>
                   </table>
@@ -69,15 +84,17 @@
               <div class="col-md-12">
                 <div role="group" class="btn-group">
                   <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
-                  <button class="btn btn-default" type="button">Cancel everything</button>
+                  <button @click="showRegistrationForm = false, showSubForm = false" class="btn btn-default" type="button">Cancel registration</button>
                 </div>
               </div>
             </div>
           </form>
         </div>
+
         <p class="lead text-center bg-danger">You need to pay the fees, totalling xxx Ar. Remember, the deadline is on Wednesday.</p>
       </div>
-      <div class="col-md-12">
+
+      <div v-if="memberHasName" class="col-md-12">
         <h4>Here are the list of those going ...</h4>
         <p>Don&#39;t wait, those who come first will enter first when we arrive.</p>
         <div class="table-responsive">
@@ -109,9 +126,86 @@
 </template>
 
 <script>
-export default {
-  name: 'Index'
-}
+  import {SAuth} from '../stores/auth'
+  import {SMembers, SMembersMixin} from '../stores/members'
+  import _ from 'lodash'
+
+  export default {
+    name: 'Index',
+
+    mixins: [SMembersMixin],
+
+    created() {
+      SMembers.fdi()
+    },
+
+    data() {
+      return {
+        showRegistrationForm: false,
+        showSubForm: false,
+
+        subFormData: {
+          name: '',
+          wantsTransportation: false,
+          isChurchMember: false,
+          isSabbathSchoolMember: false
+        },
+
+        registrationFromForm: [
+          /*
+
+          {
+            memberId: '', // This will be the first, registered member
+            wantsTransportation: false,
+            isChurchMember: false,
+            isSabbathSchoolMember: false
+          },
+
+          {
+            name: '', // Subsequent registrants
+            wantsTransportation: false,
+            isChurchMember: false,
+            isSabbathSchoolMember: false
+          },
+
+          */
+        ]
+      }
+    },
+
+    computed: {
+      memberHasName() {
+        return SAuth.state.memberProfile && SAuth.state.memberProfile.name
+      },
+
+      alreadyHasRegistration() {
+        return false
+      }
+    },
+
+    methods: {
+      addPersonToSubform() {
+        const registration = _.clone(this.subFormData)
+        if (this.registrationFromForm.length === 0) {
+          // First registration, must be the registered member
+          registration.memberId = SAuth.state.user.uid
+          delete registration.name
+        } else {
+          // Remove memberId
+          delete registration.memberId
+        }
+        this.registrationFromForm.push(registration)
+
+        this.subFormData = {
+          name: '',
+          wantsTransportation: false,
+          isChurchMember: false,
+          isSabbathSchoolMember: false
+        }
+        this.showSubForm = false
+      }
+    }
+  }
 </script>
 
 <style>
