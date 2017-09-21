@@ -23,14 +23,15 @@
               <div class="col-md-7">
                 <div v-if="!showSubForm" role="group" class="btn-group" style="margin-bottom: .5em">
                   <button @click="showSubForm = true" class="btn btn-info" type="button">
-                    <template v-if="registrationFromForm.length === 0">Register myself</template>
+                    <template v-if="!selfInSubform">Register myself</template>
                     <template v-else>Register another person</template>
                   </button>
-                  <button class="btn btn-danger" type="button">Remove</button>
+                  <button v-if="subFormSelectedIndex !== -1" @click="removePersonFromSubform"
+                          class="btn btn-danger" type="button">Remove</button>
                 </div>
 
                 <div v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
-                  <div v-if="registrationFromForm.length > 0" class="form-group">
+                  <div v-if="selfInSubform" class="form-group">
                     <label class="control-label">Name of the person</label>
                     <input v-model="subFormData.name" type="text" class="form-control" />
                   </div>
@@ -51,7 +52,7 @@
                   </div>
                   <div role="group" class="btn-group">
                     <button @click.prevent.stop="addPersonToSubform"
-                        :disabled="registrationFromForm.length !== 0 && subFormData.name.length < 2" class="btn btn-primary" type="button">Add to the List</button>
+                        :disabled="selfInSubform && subFormData.name.length < 2" class="btn btn-primary" type="button">Add to the List</button>
                     <button @click="showSubForm = false" class="btn btn-default" type="button">Do not add</button>
                   </div>
                 </div>
@@ -65,7 +66,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="registration in registrationFromForm">
+                    <tr v-for="(registration, i) in registrationFromForm" :key="i"
+                        @click="subFormSelectedIndex = i" :class="{active: subFormSelectedIndex === i}">
                       <td>
                         <span v-if="registration.name">{{registration.name}}</span>
                         <span v-if="registration.memberId">{{memberName(registration.memberId)}}</span>
@@ -83,7 +85,7 @@
               </div>
               <div class="col-md-12">
                 <div role="group" class="btn-group">
-                  <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
+                  <button :disabled="!selfInSubform" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
                   <button @click="showRegistrationForm = false, showSubForm = false" class="btn btn-default" type="button">Cancel registration</button>
                 </div>
               </div>
@@ -151,6 +153,8 @@
           isSabbathSchoolMember: false
         },
 
+        subFormSelectedIndex: -1,
+
         registrationFromForm: [
           /*
 
@@ -178,6 +182,21 @@
         return SAuth.state.memberProfile && SAuth.state.memberProfile.name
       },
 
+      selfInSubform() {
+        const self = SAuth.state.user
+        if (self) {
+          let yes = false
+          _.forEach(this.registrationFromForm, reg => {
+            if (reg.memberId === self.uid) {
+              yes = true
+              return false
+            }
+          })
+          return yes
+        }
+        return false
+      },
+
       alreadyHasRegistration() {
         return false
       }
@@ -186,7 +205,8 @@
     methods: {
       addPersonToSubform() {
         const registration = _.clone(this.subFormData)
-        if (this.registrationFromForm.length === 0) {
+        console.log(this.selfInSubform)
+        if (!this.selfInSubform) {
           // First registration, must be the registered member
           registration.memberId = SAuth.state.user.uid
           delete registration.name
@@ -194,7 +214,11 @@
           // Remove memberId
           delete registration.memberId
         }
-        this.registrationFromForm.push(registration)
+
+        if (registration.memberId)
+          this.registrationFromForm.unshift(registration)
+        else
+          this.registrationFromForm.push(registration)
 
         this.subFormData = {
           name: '',
@@ -203,6 +227,11 @@
           isSabbathSchoolMember: false
         }
         this.showSubForm = false
+      },
+
+      removePersonFromSubform() {
+        this.registrationFromForm.splice(this.subFormSelectedIndex, 1)
+        this.subFormSelectedIndex = -1
       }
     }
   }
