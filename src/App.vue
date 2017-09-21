@@ -41,7 +41,7 @@
       </nav>
     </div>
 
-    <div class="container-fluid" style="margin-top: 3.65em; background-color: #bbbbbb;">
+    <div class="container-fluid" style="margin-top: 4.9em; background-color: #bbbbbb;">
       <div class="row">
         <div class="col-md-12">
           <div class="container">
@@ -71,7 +71,7 @@
 
   const menus = [
     {label: 'Events', url: '/events'},
-    {label: 'Prayers', url: '/prayers'}
+    //{label: 'Prayers', url: '/prayers'}
   ]
 
   export default {
