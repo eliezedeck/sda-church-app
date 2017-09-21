@@ -25,7 +25,7 @@
     <div>
       <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-          <div class="navbar-header"><a href="#" class="navbar-brand navbar-link">ESC of Antananarivo</a>
+          <div class="navbar-header"><a href="#" class="navbar-brand navbar-link"><strong>English</strong>-Speaking Church of Antananarivo</a>
             <button data-toggle="collapse" data-target="#navcol-1" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
           </div>
           <div class="collapse navbar-collapse" id="navcol-1">
@@ -70,7 +70,7 @@
 
 
   const menus = [
-    {label: 'Events', url: '/events'},
+    //{label: 'Events', url: '/events'},
     //{label: 'Prayers', url: '/prayers'}
   ]
 
