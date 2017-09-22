@@ -125,7 +125,7 @@
               <input v-model.number="paymentFormAmount" type="text" class="form-control" />
             </div>
             <div role="group" class="btn-group">
-              <button @click="addPayment" :disabled="paymentFormAmount === 0" class="btn btn-primary" type="button">Add</button>
+              <button @click="addPayment" :disabled="paymentFormAmount === 0 || registrationSelected === ''" class="btn btn-primary" type="button">Add</button>
             </div>
           </form>
         </div>
@@ -409,12 +409,7 @@
           due -= p
         })
 
-        if (due > 0 && this.paymentFormAmount > 0) {
-          if (this.paymentFormAmount > due) {
-            alert('Amount too high!')
-            return
-          }
-
+        if (due !== 0 && this.paymentFormAmount !== 0) {
           await FApp.database().ref(`/SPECIAL-October1st/payments/${memberId}`).push(this.paymentFormAmount)
           this.paymentFormAmount = 0
         }
