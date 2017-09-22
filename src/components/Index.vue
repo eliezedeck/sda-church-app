@@ -89,7 +89,8 @@
               </div>
               <div class="col-md-12">
                 <div role="group" class="btn-group">
-                  <button :disabled="!selfInSubform" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
+                  <button @click.prevent.stop="confirmRegistration" :disabled="!selfInSubform"
+                          class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
                   <button @click="showRegistrationForm = false, showSubForm = false" class="btn btn-default" type="button">Cancel registration</button>
                 </div>
               </div>
@@ -135,6 +136,8 @@
   import {SAuth} from '../stores/auth'
   import {SMembers, SMembersMixin} from '../stores/members'
   import _ from 'lodash'
+
+  import FApp from '../stores/firebase'
 
   export default {
     name: 'Index',
@@ -246,6 +249,18 @@
       removePersonFromSubform() {
         this.registrationFromForm.splice(this.subFormSelectedIndex, 1)
         this.subFormSelectedIndex = -1
+      },
+
+      async confirmRegistration() {
+        const memberId = SAuth.state.user.uid
+        if (memberId) {
+          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(this.registrationFromForm)
+        }
+
+        // Reset
+        this.showSubForm = false
+        this.showRegistrationForm = false
+        this.registrationFromForm = []
       }
     }
   }
