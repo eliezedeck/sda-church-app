@@ -10,7 +10,7 @@
           </a>
         </div>
 
-        <p class="lead text-center bg-success" v-else>You are already registered.</p>
+        <p v-if="userRegistration" class="lead text-center bg-success">You are already registered.</p>
 
         <p v-if="!memberHasName" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
 
@@ -36,6 +36,17 @@
                   <div v-if="selfInSubform" class="form-group">
                     <label class="control-label">Short-name of the person</label>
                     <input v-model="subFormData.name" type="text" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">Select the appropriate age</label>
+                    <div class="radio">
+                      <label class="control-label">
+                        <input v-model="subFormData.mustPayEntryFee" :value="false" name="yearCategory" type="radio" />Less than 5 years old</label>
+                    </div>
+                    <div class="radio">
+                      <label class="control-label">
+                        <input v-model="subFormData.mustPayEntryFee" :value="true" name="yearCategory" type="radio" />5 years or Older</label>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label class="control-label">Please check what applies</label>
@@ -76,7 +87,7 @@
                       </td>
                       <td>
                         <small v-if="registration.isChurchMember || registration.isSabbathSchoolMember" style="color: green">(Covered by the Church)</small>
-                        <span v-else>{{2000 + (registration.wantsTransportation ? 4000 : 0)}} Ar</span>
+                        <span v-else>{{(registration.mustPayEntryFee ? 2000 : 0) + (registration.wantsTransportation ? 4000 : 0)}} Ar</span>
                       </td>
                     </tr>
                     </tbody>
@@ -100,7 +111,7 @@
           </form>
         </div>
 
-        <p v-if="userPayments.due - userPayments.paid > 0" class="lead text-center bg-danger">But you need to pay the fees, remaining {{userPayments.due - userPayments.paid}} Ar (of {{userPayments.due}} Ar). Remember, the deadline is on Wednesday.</p>
+        <p v-if="userPayments.due - userPayments.paid > 0" class="lead text-center bg-danger">But you need to pay the fees, remaining <strong>{{userPayments.due - userPayments.paid}}</strong> Ar (of {{userPayments.due}} Ar). Remember, the deadline is on Wednesday.</p>
       </div>
 
       <div v-if="memberHasName" class="col-md-12">
@@ -111,22 +122,24 @@
             <thead>
             <tr>
               <th>Registered by</th>
-              <th>Name </th>
-              <th>When </th>
+              <th>Name</th>
+              <th>When</th>
+
+              <th v-if="canManagePayments">Due</th>
             </tr>
             </thead>
             <tbody>
 
             <tr v-if="!loaded">
-              <td colspan="100">
+              <td colspan="100" class="text-center">
                 <i class="glyphicon glyphicon-refresh glyphicon-loading-animate"></i>&nbsp;&nbsp;Loading ...
               </td>
             </tr>
 
-            <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId">
+            <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId" @click="registrationSelected = memberId" :class="{active: registrationSelected === memberId}">
               <td>{{memberName(memberId)}}</td>
               <td>
-                <ol>
+                <ol style="margin-bottom: 0">
                   <li v-for="reg in data.details">
                     <span v-if="reg.memberId">{{memberName(reg.memberId)}}</span>
                     <span v-else>{{reg.name}}</span>
@@ -134,6 +147,10 @@
                 </ol>
               </td>
               <td>{{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}}</td>
+
+              <td>
+                <span v-if="computeRemainingDue(data.details, memberId)" class="text-danger">{{computeRemainingDue(data.details, memberId)}} Ar</span>
+              </td>
             </tr>
             </tbody>
           </table>
@@ -190,6 +207,7 @@
 
         subFormData: {
           name: '',
+          mustPayEntryFee: true,
           wantsTransportation: false,
           isChurchMember: false,
           isSabbathSchoolMember: false
@@ -214,11 +232,17 @@
           },
 
           */
-        ]
+        ],
+
+        registrationSelected: ''
       }
     },
 
     computed: {
+      canManagePayments() {
+        return _.get(SAuth.state, 'user.uid', '') === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'
+      },
+
       memberHasName() {
         return SAuth.state.memberProfile && SAuth.state.memberProfile.name
       },
@@ -242,7 +266,8 @@
         let total = 0
         _.forEach(this.registrationFromForm, reg => {
           if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
-            total += 2000
+            if (reg.mustPayEntryFee)
+              total += 2000
             if (reg.wantsTransportation)
               total += 4000
           }
@@ -271,7 +296,8 @@
           })
           _.forEach(_.get(this.specialTreeRegistrations, [self.uid, 'details']), reg => {
             if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
-              info.due += 2000
+              if (reg.mustPayEntryFee)
+                info.due += 2000
               if (reg.wantsTransportation)
                 info.due += 4000
             }
@@ -331,6 +357,22 @@
           this.showRegistrationForm = false
           this.registrationFromForm = []
         }
+      },
+
+      computeRemainingDue(registrationDetails, memberId) {
+        let due = 0
+        _.forEach(registrationDetails, reg => {
+          if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
+            if (reg.mustPayEntryFee)
+              due += 2000
+            if (reg.wantsTransportation)
+              due += 4000
+          }
+        })
+        _.forEach(_.get(this.specialTreePayments, memberId), p => {
+          due -= p
+        })
+        return due
       }
     }
   }
