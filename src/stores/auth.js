@@ -45,7 +45,7 @@ export const SAuth = new Vuex.Store({
         }
       } else {
         console.log('Empty user')
-        state.user = user
+        state.user = null
       }
     },
 
@@ -88,5 +88,8 @@ FApp.auth().onAuthStateChanged((user) => {
         SAuth.commit('UPDATE_MEMBER_PROFILE', {member: null})
       }
     })
+  }
+  else {
+    SAuth.commit('UPDATE_MEMBER_PROFILE', {member: null})
   }
 })

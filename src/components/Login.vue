@@ -113,6 +113,11 @@
 
           await window.confirmationResult.confirm(this.confirmationCode)
 
+          // Reload the page to refresh the data which depends on the user identity
+          window.setTimeout(() => {
+            window.location.reload(false)
+          }, 200)
+
           // User signed in successfully.
           this.$router.replace('/')
         }

@@ -66,6 +66,11 @@
             displayName: this.displayName
           })
 
+          // Reload the page to refresh the data which depends on the user identity
+          window.setTimeout(() => {
+            window.location.reload(false)
+          }, 200)
+
           this.$emit('dismiss')
         }
         catch (e) {
