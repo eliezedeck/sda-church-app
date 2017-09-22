@@ -4,11 +4,13 @@
       <div class="col-md-12">
         <h1 class="text-center">October 1st &mdash; <strong>Church Picnic</strong></h1></div>
       <div class="col-md-12">
-        <div v-if="memberHasName && !showRegistrationForm && !alreadyHasRegistration" role="group" class="btn-group btn-group-justified">
+        <div v-if="memberHasName && !showRegistrationForm && !userRegistration" role="group" class="btn-group btn-group-justified">
           <a @click.prevent="showRegistrationForm = true" class="btn btn-primary btn-lg" role="button" href="#">
             <i class="glyphicon glyphicon-bell"></i> Register today
           </a>
         </div>
+
+        <p class="lead text-center bg-success" v-else>You are already registered.</p>
 
         <p v-if="!memberHasName" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
 
@@ -98,7 +100,7 @@
           </form>
         </div>
 
-        <p class="lead text-center bg-danger">You need to pay the fees, totalling xxx Ar. Remember, the deadline is on Wednesday.</p>
+        <p v-if="userPayments.due - userPayments.paid > 0" class="lead text-center bg-danger">But you need to pay the fees, remaining {{userPayments.due - userPayments.paid}} Ar (of {{userPayments.due}} Ar). Remember, the deadline is on Wednesday.</p>
       </div>
 
       <div v-if="memberHasName" class="col-md-12">
@@ -114,15 +116,24 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>Cell 1</td>
-              <td>Cell 2</td>
-              <td>Cell 2</td>
+
+            <tr v-if="!loaded">
+              <td colspan="100">
+                <i class="glyphicon glyphicon-refresh glyphicon-loading-animate"></i>&nbsp;&nbsp;Loading ...
+              </td>
             </tr>
-            <tr>
-              <td>Cell 3</td>
-              <td>Cell 2</td>
-              <td>Cell 4</td>
+
+            <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId">
+              <td>{{memberName(memberId)}}</td>
+              <td>
+                <ol>
+                  <li v-for="reg in data.details">
+                    <span v-if="reg.memberId">{{memberName(reg.memberId)}}</span>
+                    <span v-else>{{reg.name}}</span>
+                  </li>
+                </ol>
+              </td>
+              <td>{{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}}</td>
             </tr>
             </tbody>
           </table>
@@ -136,7 +147,9 @@
   import {SAuth} from '../stores/auth'
   import {SMembers, SMembersMixin} from '../stores/members'
   import _ from 'lodash'
+  import moment from 'moment'
 
+  import firebase from 'firebase'
   import FApp from '../stores/firebase'
 
   export default {
@@ -146,10 +159,32 @@
 
     created() {
       SMembers.fdi()
+
+      // Manually load the whole /SPECIAL-October1st
+      this.special = FApp.database().ref('/SPECIAL-October1st')
+      this.special.on('value', (snapshot) => {
+        const tree = snapshot.val()
+        this.loaded = true
+
+        if (tree !== null) {
+          this.specialTreeRegistrations = tree.registrations || {}
+          this.specialTreePayments = tree.payments || {}
+        }
+      })
+    },
+
+    destroyed() {
+      this.special.off()
     },
 
     data() {
       return {
+        moment: moment,
+
+        loaded: false,
+        specialTreeRegistrations: {},
+        specialTreePayments: {},
+
         showRegistrationForm: false,
         showSubForm: false,
 
@@ -215,8 +250,39 @@
         return total
       },
 
-      alreadyHasRegistration() {
-        return false
+      userRegistration() {
+        const self = SAuth.state.user
+        if (self) {
+          return this.specialTreeRegistrations[self.uid]
+        }
+        return null
+      },
+
+      userPayments() {
+        const self = SAuth.state.user
+        if (self) {
+          const info = {
+            due: 0,
+            paid: 0,
+            payments: this.specialTreePayments[self.uid] || []
+          }
+          _.forEach(info.payments, p => {
+            info.paid += p
+          })
+          _.forEach(_.get(this.specialTreeRegistrations, [self.uid, 'details']), reg => {
+            if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
+              info.due += 2000
+              if (reg.wantsTransportation)
+                info.due += 4000
+            }
+          })
+          return info
+        }
+        return {
+          due: 0,
+          paid: 0,
+          payments: []
+        }
       }
     },
 
@@ -254,13 +320,17 @@
       async confirmRegistration() {
         const memberId = SAuth.state.user.uid
         if (memberId) {
-          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(this.registrationFromForm)
-        }
+          const fixation = {
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            details: this.registrationFromForm
+          }
+          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(fixation)
 
-        // Reset
-        this.showSubForm = false
-        this.showRegistrationForm = false
-        this.registrationFromForm = []
+          // Reset
+          this.showSubForm = false
+          this.showRegistrationForm = false
+          this.registrationFromForm = []
+        }
       }
     }
   }
