@@ -36,7 +36,7 @@
                 <div v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
                   <div v-if="selfInSubform" class="form-group">
                     <label class="control-label">Short-name of the person</label>
-                    <input v-model="subFormData.name" type="text" class="form-control" />
+                    <input v-model="subFormData.name" type="text" placeholder="(mandatory)" class="form-control" />
                   </div>
                   <div class="form-group">
                     <label class="control-label">Select the appropriate age</label>
