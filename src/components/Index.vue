@@ -29,7 +29,7 @@
                     <template v-if="!selfInSubform">Register myself</template>
                     <template v-else>Register another person</template>
                   </button>
-                  <button v-if="subFormSelectedIndex !== -1" @click="removePersonFromSubform"
+                  <button :disabled="subFormSelectedIndex === -1" @click="removePersonFromSubform"
                           class="btn btn-danger" type="button">Remove</button>
                 </div>
 
