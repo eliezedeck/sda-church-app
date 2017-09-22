@@ -10,7 +10,7 @@
           </a>
         </div>
 
-        <p v-if="userRegistration" class="lead text-center bg-success">You are already registered.</p>
+        <p v-if="userRegistration" class="lead text-center bg-success">You are registered.</p>
 
         <p v-if="!memberHasName" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
 
@@ -115,8 +115,8 @@
       </div>
 
       <div v-if="memberHasName" class="col-md-12">
-        <h4>Here are the list of those going ...</h4>
-        <p>Don&#39;t wait, those who come first will enter first when we arrive.</p>
+        <h4>Here are the list of those who are going ...</h4>
+        <p>Those who registered first will enter first in the Transportation and when we arrive.</p>
 
         <div v-if="canManagePayments" class="well well-sm">
           <form>
@@ -131,12 +131,14 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table">
+          <table class="table table-striped">
             <thead>
             <tr>
-              <th>Registered by</th>
-              <th>Name</th>
-              <th>When</th>
+              <th>Registration</th>
+              <th>Names</th>
+
+              <th>Entry fees</th>
+              <th>Special Transportation</th>
 
               <th v-if="canManagePayments">Due</th>
             </tr>
@@ -150,16 +152,37 @@
             </tr>
 
             <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId" @click="registrationSelected = memberId" :class="{active: registrationSelected === memberId}">
-              <td>{{memberName(memberId)}}</td>
+              <td>
+                {{memberName(memberId)}}
+                <div>
+                  <small>({{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}})</small>
+                </div>
+              </td>
               <td>
                 <ol style="margin-bottom: 0">
                   <li v-for="reg in data.details">
-                    <span v-if="reg.memberId">{{memberName(reg.memberId)}}</span>
-                    <span v-else>{{reg.name}}</span>
+                    <span v-if="reg.memberId"><strong>{{memberName(reg.memberId)}}</strong></span>
+                    <span v-else><strong>{{reg.name}}</strong></span>
                   </li>
                 </ol>
               </td>
-              <td>{{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}}</td>
+
+              <td>
+                <ul style="margin-bottom: 0">
+                  <li v-for="reg in data.details">
+                    <span v-if="reg.mustPayEntryFee && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
+                    <span v-if="reg.mustPayEntryFee && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">2000 Ar</span>
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul style="margin-bottom: 0">
+                  <li v-for="reg in data.details">
+                    <span v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
+                    <span v-if="reg.wantsTransportation && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">4000 Ar</span>
+                  </li>
+                </ul>
+              </td>
 
               <td>
                 <span v-if="computeRemainingDue(data.details, memberId) !== 0" class="text-danger">{{computeRemainingDue(data.details, memberId)}} Ar</span>
@@ -199,6 +222,9 @@
         if (tree !== null) {
           this.specialTreeRegistrations = tree.registrations || {}
           this.specialTreePayments = tree.payments || {}
+        } else {
+          this.specialTreeRegistrations = {}
+          this.specialTreePayments = {}
         }
       })
     },
@@ -346,6 +372,7 @@
 
         this.subFormData = {
           name: '',
+          mustPayEntryFee: true,
           wantsTransportation: false,
           isChurchMember: false,
           isSabbathSchoolMember: false
