@@ -23,7 +23,7 @@
             </div>
             <div v-if="mode === 'confirm-code'" role="group" class="btn-group">
               <button @click.prevent="doBackToSendSMS" class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
-              <button @click.prevent="doSendConfirmationCode" :disabled="!confirmationCode || confirmationCode.length < 6 || codeSent" class="btn btn-primary" type="submit">Confirm confirmation code</button>
+              <button @click.prevent="doSendConfirmationCode" :disabled="!confirmationCode || confirmationCode.length < 6 || codeSent" class="btn btn-primary" type="submit">Confirm the code</button>
             </div>
           </form>
         </div>

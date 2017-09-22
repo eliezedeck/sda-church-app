@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <h1 class="text-center">October 1st &mdash; <strong>Church Picnic</strong></h1></div>
       <div class="col-md-12">
-        <div v-if="memberHasName && !showRegistrationForm && !userRegistration" role="group" class="btn-group btn-group-justified">
+        <div v-if="user && memberHasName && !showRegistrationForm && !userRegistration" role="group" class="btn-group btn-group-justified">
           <a @click.prevent="showRegistrationForm = true" class="btn btn-primary btn-lg" role="button" href="#">
             <i class="glyphicon glyphicon-bell"></i> Register today
           </a>
@@ -115,7 +115,7 @@
         <p v-if="userPayments.due - userPayments.paid > 0" class="lead text-center bg-danger">But you need to pay the fees, remaining <strong>{{userPayments.due - userPayments.paid}}</strong> Ar (of {{userPayments.due}} Ar). Remember, the deadline is on Wednesday.</p>
       </div>
 
-      <div v-if="memberHasName" class="col-md-12">
+      <div v-if="user && memberHasName" class="col-md-12">
         <h4>Here are the list of those who are going ...</h4>
         <p>Those who registered first will enter first in the Transportation and when we arrive.</p>
 
