@@ -32,7 +32,7 @@
 
                 <div v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
                   <div v-if="selfInSubform" class="form-group">
-                    <label class="control-label">Name of the person</label>
+                    <label class="control-label">Short-name of the person</label>
                     <input v-model="subFormData.name" type="text" class="form-control" />
                   </div>
                   <div class="form-group">
@@ -74,14 +74,18 @@
                       </td>
                       <td>
                         <small v-if="registration.isChurchMember || registration.isSabbathSchoolMember" style="color: green">(Covered by the Church)</small>
-                        <span v-else><strong>{{2000 + (registration.wantsTransportation ? 4000 : 0)}}</strong> Ar</span>
+                        <span v-else>{{2000 + (registration.wantsTransportation ? 4000 : 0)}} Ar</span>
                       </td>
                     </tr>
                     </tbody>
+                    <tfoot>
+                    <tr>
+                      <td>TOTAL</td>
+                      <td><strong>{{subFormTotalFees}}</strong> Ar</td>
+                    </tr>
+                    </tfoot>
                   </table>
                 </div>
-                <p class="text-danger">The fees must be paid on, or before Wednesday 27th of September 2017. If you miss this date, your registration will be removed.</p>
-                <p class="text-danger">The Church is covering Transportation for one or more of the persons you have registered. Those must go with the Special Transportation on sunday, otherwise, you will pay the full Transportation fees of 4000 Ar per person.</p>
               </div>
               <div class="col-md-12">
                 <div role="group" class="btn-group">
@@ -152,7 +156,6 @@
           isChurchMember: false,
           isSabbathSchoolMember: false
         },
-
         subFormSelectedIndex: -1,
 
         registrationFromForm: [
@@ -197,6 +200,18 @@
         return false
       },
 
+      subFormTotalFees() {
+        let total = 0
+        _.forEach(this.registrationFromForm, reg => {
+          if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
+            total += 2000
+            if (reg.wantsTransportation)
+              total += 4000
+          }
+        })
+        return total
+      },
+
       alreadyHasRegistration() {
         return false
       }
@@ -205,7 +220,6 @@
     methods: {
       addPersonToSubform() {
         const registration = _.clone(this.subFormData)
-        console.log(this.selfInSubform)
         if (!this.selfInSubform) {
           // First registration, must be the registered member
           registration.memberId = SAuth.state.user.uid
