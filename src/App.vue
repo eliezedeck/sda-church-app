@@ -72,6 +72,7 @@
   const menus = [
     //{label: 'Events', url: '/events'},
     //{label: 'Prayers', url: '/prayers'}
+    {label: 'Church Picnic REGISTRATION', url: '/'}
   ]
 
   export default {

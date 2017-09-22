@@ -53,15 +53,15 @@
                     <label class="control-label">Please check what applies</label>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input v-model="subFormData.wantsTransportation" type="checkbox" />Need <strong>Special Transportation</strong></label>
+                        <input v-model="subFormData.wantsTransportation" type="checkbox" />Will go with the <strong>Common Transportation Bus</strong> (don't have own Car/Transportation)</label>
                     </div>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input v-model="subFormData.isChurchMember" type="checkbox" />Member of the English-Speaking Church</label>
+                        <input v-model="subFormData.isChurchMember" type="checkbox" />Church member</label>
                     </div>
                     <div class="checkbox">
                       <label class="control-label">
-                        <input v-model="subFormData.isSabbathSchoolMember" type="checkbox" />Registered in one of the English-Speaking Church Sabbath school class</label>
+                        <input v-model="subFormData.isSabbathSchoolMember" type="checkbox" />Sabbath School member</label>
                     </div>
                   </div>
                   <div role="group" class="btn-group">
@@ -104,7 +104,7 @@
               <div class="col-md-12">
                 <div role="group" class="btn-group">
                   <button @click.prevent.stop="confirmRegistration" :disabled="!selfInSubform"
-                          class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Finish + Confirm registration</button>
+                          class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Confirm registration</button>
                   <button @click="showRegistrationForm = false, showSubForm = false" class="btn btn-default" type="button">Cancel registration</button>
                 </div>
               </div>
@@ -135,11 +135,11 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <th>Registration</th>
+              <th>Registration by</th>
               <th>Names</th>
 
               <th>Entry fees</th>
-              <th>Special Transportation</th>
+              <th>Common Bus Transportation</th>
 
               <th v-if="canManagePayments">Due</th>
             </tr>
@@ -155,6 +155,8 @@
             <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId" @click="registrationSelected = memberId" :class="{active: registrationSelected === memberId}">
               <td>
                 {{memberName(memberId)}}
+                <a v-if="user && user.uid === memberId" @click.prevent="deleteOwnRegistration" href="#" class="bg-danger">(<i class="glyphicon glyphicon-trash"></i> Remove)</a>
+
                 <div>
                   <small>({{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}})</small>
                 </div>
@@ -391,18 +393,20 @@
       },
 
       async confirmRegistration() {
-        const memberId = SAuth.state.user.uid
-        if (memberId) {
-          const fixation = {
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
-            details: this.registrationFromForm
-          }
-          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(fixation)
+        if (window.confirm("Are you sure you have added everyone that will go with you?")) {
+          const memberId = SAuth.state.user.uid
+          if (memberId) {
+            const fixation = {
+              timestamp: firebase.database.ServerValue.TIMESTAMP,
+              details: this.registrationFromForm
+            }
+            await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(fixation)
 
-          // Reset
-          this.showSubForm = false
-          this.showRegistrationForm = false
-          this.registrationFromForm = []
+            // Reset
+            this.showSubForm = false
+            this.showRegistrationForm = false
+            this.registrationFromForm = []
+          }
         }
       },
 
@@ -444,6 +448,14 @@
         if (due !== 0 && this.paymentFormAmount !== 0) {
           await FApp.database().ref(`/SPECIAL-October1st/payments/${memberId}`).push(this.paymentFormAmount)
           this.paymentFormAmount = 0
+        }
+      },
+
+      async deleteOwnRegistration() {
+        const memberId = SAuth.state.user.uid
+        if (window.confirm("Are you sure?")) {
+          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).remove()
+          this.showSubForm = true
         }
       }
     }
