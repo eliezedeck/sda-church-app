@@ -12,7 +12,8 @@
 
         <p v-if="userRegistration" class="lead text-center bg-success">You are registered.</p>
 
-        <p v-if="!memberHasName" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
+        <p v-if="!memberHasName && user" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
+        <p v-if="!user" class="lead text-center">You must register your name and phone number in order to participate in this event. To do so, click <router-link to="/login">here</router-link>.</p>
 
         <div v-if="showRegistrationForm" class="well well-sm">
           <form>
@@ -280,6 +281,10 @@
     },
 
     computed: {
+      user() {
+        return SAuth.state.user
+      },
+
       canManagePayments() {
         return _.get(SAuth.state, 'user.uid', '') === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'
       },
