@@ -117,6 +117,19 @@
       <div v-if="memberHasName" class="col-md-12">
         <h4>Here are the list of those going ...</h4>
         <p>Don&#39;t wait, those who come first will enter first when we arrive.</p>
+
+        <div v-if="canManagePayments" class="well well-sm">
+          <form>
+            <div class="form-group">
+              <label class="control-label">Amount</label>
+              <input v-model.number="paymentFormAmount" type="text" class="form-control" />
+            </div>
+            <div role="group" class="btn-group">
+              <button @click="addPayment" :disabled="paymentFormAmount === 0" class="btn btn-primary" type="button">Add</button>
+            </div>
+          </form>
+        </div>
+
         <div class="table-responsive">
           <table class="table">
             <thead>
@@ -149,7 +162,7 @@
               <td>{{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}}</td>
 
               <td>
-                <span v-if="computeRemainingDue(data.details, memberId)" class="text-danger">{{computeRemainingDue(data.details, memberId)}} Ar</span>
+                <span v-if="computeRemainingDue(data.details, memberId) !== 0" class="text-danger">{{computeRemainingDue(data.details, memberId)}} Ar</span>
               </td>
             </tr>
             </tbody>
@@ -213,6 +226,8 @@
           isSabbathSchoolMember: false
         },
         subFormSelectedIndex: -1,
+
+        paymentFormAmount: 0,
 
         registrationFromForm: [
           /*
@@ -373,6 +388,36 @@
           due -= p
         })
         return due
+      },
+
+      async addPayment() {
+        const memberId = this.registrationSelected
+
+        const registrationDetails = _.get(this.specialTreeRegistrations, [memberId, 'details'])
+        let due = 0
+        _.forEach(registrationDetails, reg => {
+          if (!reg.isChurchMember && !reg.isSabbathSchoolMember) {
+            if (reg.mustPayEntryFee)
+              due += 2000
+            if (reg.wantsTransportation)
+              due += 4000
+          }
+        })
+
+        const payments = _.get(this.specialTreePayments, [memberId])
+        _.forEach(payments, p => {
+          due -= p
+        })
+
+        if (due > 0 && this.paymentFormAmount > 0) {
+          if (this.paymentFormAmount > due) {
+            alert('Amount too high!')
+            return
+          }
+
+          await FApp.database().ref(`/SPECIAL-October1st/payments/${memberId}`).push(this.paymentFormAmount)
+          this.paymentFormAmount = 0
+        }
       }
     }
   }
