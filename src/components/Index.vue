@@ -153,27 +153,27 @@
             </tr>
 
             <tr v-else
-                v-for="(data, memberId) in specialTreeRegistrations" :key="memberId"
-                @click="registrationSelected = memberId"
-                :class="{active: registrationSelected === memberId}">
+                v-for="row in processedRegistrationTree.iterable" :key="row.memberId"
+                @click="registrationSelected = row.memberId"
+                :class="{active: registrationSelected === row.memberId}">
               <td>
-                {{memberName(memberId)}}
+                {{memberName(row.memberId)}}
 
-                <span v-if="user && (user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">({{membersLookup(memberId).phoneNumber}})</span>
+                <span v-if="user && (user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">({{membersLookup(row.memberId).phoneNumber}})</span>
 
-                <span v-if="user && (user.uid === memberId || user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">
+                <span v-if="user && (user.uid === row.memberId || user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">
                   &mdash;
                   <a v-if="user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'" @click.prevent="editRegistration" href="#" class="text-warning"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                   <a @click.prevent="deleteOwnRegistration" href="#" class="text-danger"><i class="glyphicon glyphicon-trash"></i> Remove</a>
                 </span>
 
                 <div>
-                  <small>({{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}})</small>
+                  <small>({{moment(row.timestamp).format('Do MMMM, HH:mm:ss')}})</small>
                 </div>
               </td>
               <td>
                 <ol style="margin-bottom: 0">
-                  <li v-for="reg in data.details">
+                  <li v-for="reg in row.details">
                     <span v-if="reg.memberId"><strong>{{memberName(reg.memberId)}}</strong></span>
                     <span v-else><strong>{{reg.name}}</strong></span>
                   </li>
@@ -182,7 +182,7 @@
 
               <td>
                 <ul style="margin-bottom: 0">
-                  <li v-for="reg in data.details">
+                  <li v-for="reg in row.details">
                     <span v-if="reg.mustPayEntryFee && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
                     <span v-if="reg.mustPayEntryFee && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">2000 Ar</span>
                   </li>
@@ -190,7 +190,7 @@
               </td>
               <td>
                 <ul style="margin-bottom: 0">
-                  <li v-for="reg in data.details">
+                  <li v-for="reg in row.details">
                     <span v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
                     <span v-if="reg.wantsTransportation && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">4000 Ar</span>
                   </li>
@@ -198,10 +198,21 @@
               </td>
 
               <td>
-                <span v-if="computeRemainingDue(data.details, memberId) !== 0" class="text-danger">{{computeRemainingDue(data.details, memberId)}} Ar</span>
+                <span v-if="row.totalDue > 0" class="text-danger">{{row.totalDue}} Ar</span>
               </td>
             </tr>
             </tbody>
+
+            <tfoot>
+            <tr>
+              <td>TOTAL</td>
+              <td>{{processedRegistrationTree.totalRegistrantsCount}} registrants</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            </tfoot>
+
           </table>
         </div>
       </div>
@@ -374,6 +385,29 @@
           paid: 0,
           payments: []
         }
+      },
+
+      processedRegistrationTree() {
+        const data = {
+          totalRegistrantsCount: 0
+        }
+
+        data.iterable = _.map(this.specialTreeRegistrations, (node, memberId) => {
+          const reg = node.details
+          const row = {
+            details: reg,
+            memberId,
+            timestamp: node.timestamp,
+            totalDue: 0
+          }
+
+          row.totalDue = this.computeRemainingDue(reg, memberId)
+          data.totalRegistrantsCount += reg.length
+
+          return row
+        })
+
+        return data
       }
     },
 
