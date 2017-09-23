@@ -26,15 +26,15 @@
               <div class="col-md-7">
                 <div v-if="!showSubForm" role="group" class="btn-group" style="margin-bottom: .5em">
                   <button @click="showSubForm = true" class="btn btn-info" type="button">
-                    <template v-if="!selfInSubform">Register myself</template>
+                    <template v-if="!selfInSubform && !editMode">Register myself</template>
                     <template v-else>Register another person</template>
                   </button>
                   <button :disabled="subFormSelectedIndex === -1" @click="removePersonFromSubform"
                           class="btn btn-danger" type="button">Remove</button>
                 </div>
 
-                <div v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
-                  <div v-if="selfInSubform" class="form-group">
+                <div id="subForm" v-if="showSubForm" class="well well-sm" style="background-color:rgb(235,235,235);">
+                  <div v-if="selfInSubform || editMode" class="form-group">
                     <label class="control-label">Short-name of the person</label>
                     <input v-model="subFormData.name" type="text" placeholder="(mandatory)" class="form-control" />
                   </div>
@@ -103,7 +103,7 @@
               </div>
               <div class="col-md-12">
                 <div role="group" class="btn-group">
-                  <button @click.prevent.stop="confirmRegistration" :disabled="!selfInSubform"
+                  <button @click.prevent.stop="confirmRegistration" :disabled="!selfInSubform && !editMode"
                           class="btn btn-primary" type="button"><i class="glyphicon glyphicon-ok"></i> Confirm registration</button>
                   <button @click="showRegistrationForm = false, showSubForm = false" class="btn btn-default" type="button">Cancel registration</button>
                 </div>
@@ -152,10 +152,20 @@
               </td>
             </tr>
 
-            <tr v-else v-for="(data, memberId) in specialTreeRegistrations" :key="memberId" @click="registrationSelected = memberId" :class="{active: registrationSelected === memberId}">
+            <tr v-else
+                v-for="(data, memberId) in specialTreeRegistrations" :key="memberId"
+                @click="registrationSelected = memberId"
+                :class="{active: registrationSelected === memberId}">
               <td>
                 {{memberName(memberId)}}
-                <a v-if="user && user.uid === memberId" @click.prevent="deleteOwnRegistration" href="#" class="bg-danger">(<i class="glyphicon glyphicon-trash"></i> Remove)</a>
+
+                <span v-if="user && (user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">({{membersLookup(memberId).phoneNumber}})</span>
+
+                <span v-if="user && (user.uid === memberId || user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">
+                  &mdash;
+                  <a v-if="user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'" @click.prevent="editRegistration" href="#" class="text-warning"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                  <a @click.prevent="deleteOwnRegistration" href="#" class="text-danger"><i class="glyphicon glyphicon-trash"></i> Remove</a>
+                </span>
 
                 <div>
                   <small>({{moment(data.timestamp).format('Do MMMM, HH:mm:ss')}})</small>
@@ -258,6 +268,7 @@
 
         paymentFormAmount: 0,
 
+        editMode: false,
         registrationFromForm: [
           /*
 
@@ -279,6 +290,12 @@
         ],
 
         registrationSelected: ''
+      }
+    },
+
+    watch: {
+      registrationSelected() {
+        console.log(`Selected registration by ${this.registrationSelected}`)
       }
     },
 
@@ -363,7 +380,7 @@
     methods: {
       addPersonToSubform() {
         const registration = _.clone(this.subFormData)
-        if (!this.selfInSubform) {
+        if (!this.selfInSubform && !this.editMode) {
           // First registration, must be the registered member
           registration.memberId = SAuth.state.user.uid
           delete registration.name
@@ -396,16 +413,22 @@
         if (window.confirm("Are you sure you have added everyone that will go with you?")) {
           const memberId = SAuth.state.user.uid
           if (memberId) {
-            const fixation = {
-              timestamp: firebase.database.ServerValue.TIMESTAMP,
-              details: this.registrationFromForm
+            if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2' && this.editMode) {
+              await FApp.database().ref(`/SPECIAL-October1st/registrations/${this.registrationSelected}/details`).set(this.registrationFromForm)
             }
-            await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(fixation)
+            else {
+              const fixation = {
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                details: this.registrationFromForm
+              }
+              await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).set(fixation)
+            }
 
             // Reset
             this.showSubForm = false
             this.showRegistrationForm = false
             this.registrationFromForm = []
+            this.editMode = false
           }
         }
       },
@@ -453,10 +476,27 @@
 
       async deleteOwnRegistration() {
         const memberId = SAuth.state.user.uid
-        if (window.confirm("Are you sure?")) {
-          await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).remove()
+        if (window.confirm("Are you sure you want to delete this Registration?")) {
+          if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2') {
+            await FApp.database().ref(`/SPECIAL-October1st/registrations/${this.registrationSelected}`).remove()
+          } else {
+            await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).remove()
+          }
           this.showSubForm = true
         }
+      },
+
+      async editRegistration() {
+        const memberId = SAuth.state.user.uid
+        let registrationDetails
+        if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')
+          registrationDetails = _.get(this.specialTreeRegistrations, [this.registrationSelected, 'details'])
+        else
+          registrationDetails = _.get(this.specialTreeRegistrations, [memberId, 'details'])
+
+        this.registrationFromForm = _.clone(registrationDetails)
+        this.showRegistrationForm = true
+        this.editMode = true
       }
     }
   }
