@@ -37,6 +37,9 @@ export const SAuth = new Vuex.Store({
           phoneNumber: user.phoneNumber
         }
 
+        // Set the phone number to the members
+        FApp.database().ref(`/members/${user.uid}/phoneNumber`).set(user.phoneNumber)
+
         // Redirect ...
         if (state.redirectPath) {
           const path = state.redirectPath
