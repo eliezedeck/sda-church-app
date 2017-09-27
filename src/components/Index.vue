@@ -211,7 +211,7 @@
                 <span v-if="canManagePayments">{{processedRegistrationTree.totalChurchCoveredEntryFeesCount}} ({{processedRegistrationTree.totalChurchCoveredEntryFeesCount * 2000}} Ar)</span>
               </td>
               <td>
-                <span v-if="canManagePayments">{{processedRegistrationTree.totalChurchCoveredBusCount}} ({{processedRegistrationTree.totalChurchCoveredBusCount * 6000}} Ar)</span>
+                <span v-if="canManagePayments">{{processedRegistrationTree.totalChurchCoveredBusCount}} (covered by Church, costing {{processedRegistrationTree.totalChurchCoveredBusCount * 6000}} Ar) / {{processedRegistrationTree.totalBus}}</span>
               </td>
               <td></td>
             </tr>
@@ -234,7 +234,7 @@
             <tbody>
               <tr
                   v-for="row in processedRegistrationTree.iterable" :key="row.memberId"
-                  v-if="row.totalChurchCoveredBusCount > 0"
+                  v-if="row.totalBus > 0"
               >
                 <td>
                   <strong>{{memberName(row.memberId)}}</strong>
@@ -242,7 +242,7 @@
                 <td>
                   <ol style="margin-bottom: 0">
                     <li v-for="reg in row.details" :key="reg.memberId"
-                      v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)"
+                      v-if="reg.wantsTransportation"
                     >
                       <span v-if="reg.memberId">{{memberName(row.memberId)}}</span>
                       <span v-else>{{reg.name}}</span>
@@ -254,7 +254,7 @@
             <tfoot>
               <tr>
                 <td>TOTAL</td>
-                <td>{{processedRegistrationTree.totalChurchCoveredBusCount}}</td>
+                <td>{{processedRegistrationTree.totalChurchCoveredBusCount}} (covered) / {{processedRegistrationTree.totalBus}}</td>
               </tr>
             </tfoot>
           </table>
@@ -436,6 +436,7 @@
         const data = {
           totalRegistrantsCount: 0,
           totalChurchCoveredEntryFeesCount: 0,
+          totalBus: 0,
           totalChurchCoveredBusCount: 0
         }
 
@@ -446,6 +447,7 @@
             memberId,
             timestamp: node.timestamp,
             totalDue: 0,
+            totalBus: 0,
             totalChurchCoveredBusCount: 0
           }
 
@@ -459,6 +461,9 @@
                 data.totalChurchCoveredBusCount++
                 row.totalChurchCoveredBusCount++
               }
+
+              data.totalBus++
+              row.totalBus++
             }
 
             if (reg.mustPayEntryFee) {
