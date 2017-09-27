@@ -9,8 +9,9 @@
             <i class="glyphicon glyphicon-bell"></i> Register today
           </a>
         </div>
+        <p v-else class="text-center lead text-danger bg-danger">The registration is now <strong>CLOSED</strong>. Sorry.</p>
 
-        <p v-if="userRegistration" class="lead text-center bg-success">You are registered.</p>
+        <p v-if="userRegistration" class="lead text-center bg-success">You are already registered. No worries.</p>
 
         <p v-if="!memberHasName && user" class="lead text-center">You must update your Profile with your name before you can register. To do so, click <router-link to="/profile">here</router-link>.</p>
         <p v-if="!user" class="lead text-center">You must register your name and phone number in order to participate in this event. To do so, click <router-link to="/login">here</router-link>.</p>
