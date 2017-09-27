@@ -122,7 +122,7 @@
         <div v-if="canManagePayments" class="well well-sm">
           <form>
             <div class="form-group">
-              <label class="control-label">Amount</label>
+              <label class="control-label">Amount received from the selected registration</label>
               <input v-model.number="paymentFormAmount" type="text" class="form-control" />
             </div>
             <div role="group" class="btn-group">
@@ -161,7 +161,7 @@
 
                 <span v-if="user && (user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">({{membersLookup(row.memberId).phoneNumber}})</span>
 
-                <span v-if="user && (user.uid === row.memberId || user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">
+                <span v-if="canManagePayments">
                   &mdash;
                   <a v-if="user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'" @click.prevent="editRegistration" href="#" class="text-warning"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                   <a @click.prevent="deleteOwnRegistration" href="#" class="text-danger"><i class="glyphicon glyphicon-trash"></i> Remove</a>
@@ -173,7 +173,7 @@
               </td>
               <td>
                 <ol style="margin-bottom: 0">
-                  <li v-for="reg in row.details">
+                  <li v-for="reg in row.details" :key="reg.memberId">
                     <span v-if="reg.memberId"><strong>{{memberName(reg.memberId)}}</strong></span>
                     <span v-else><strong>{{reg.name}}</strong></span>
                   </li>
@@ -182,7 +182,7 @@
 
               <td>
                 <ul style="margin-bottom: 0">
-                  <li v-for="reg in row.details">
+                  <li v-for="reg in row.details" :key="reg.memberId">
                     <span v-if="reg.mustPayEntryFee && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
                     <span v-if="reg.mustPayEntryFee && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">2000 Ar</span>
                   </li>
@@ -190,7 +190,7 @@
               </td>
               <td>
                 <ul style="margin-bottom: 0">
-                  <li v-for="reg in row.details">
+                  <li v-for="reg in row.details" :key="reg.memberId">
                     <span v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)" class="text-success">(Church)</span>
                     <span v-if="reg.wantsTransportation && (!reg.isChurchMember && !reg.isSabbathSchoolMember)">4000 Ar</span>
                   </li>
@@ -316,7 +316,8 @@
       },
 
       canManagePayments() {
-        return _.get(SAuth.state, 'user.uid', '') === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'
+        const uid = _.get(SAuth.state, 'user.uid', '')
+        return uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2' || 'bsPOogFErde5KmTQEndNh4nnQ4u1'
       },
 
       memberHasName() {
