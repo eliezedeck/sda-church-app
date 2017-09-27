@@ -159,11 +159,11 @@
               <td>
                 {{memberName(row.memberId)}}
 
-                <span v-if="user && (user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')">({{membersLookup(row.memberId).phoneNumber}})</span>
+                <span v-if="canManagePayments">({{membersLookup(row.memberId).phoneNumber}})</span>
 
                 <span v-if="canManagePayments">
                   &mdash;
-                  <a v-if="user.uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2'" @click.prevent="editRegistration" href="#" class="text-warning"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                  <a @click.prevent="editRegistration" href="#" class="text-warning"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                   <a @click.prevent="deleteOwnRegistration" href="#" class="text-danger"><i class="glyphicon glyphicon-trash"></i> Remove</a>
                 </span>
 
@@ -317,7 +317,7 @@
 
       canManagePayments() {
         const uid = _.get(SAuth.state, 'user.uid', '')
-        return uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2' || 'bsPOogFErde5KmTQEndNh4nnQ4u1'
+        return uid === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2' || uid === 'bsPOogFErde5KmTQEndNh4nnQ4u1'
       },
 
       memberHasName() {
@@ -463,7 +463,7 @@
         if (window.confirm("Are you sure you have added everyone that will go with you?")) {
           const memberId = SAuth.state.user.uid
           if (memberId) {
-            if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2' && this.editMode) {
+            if (this.canManagePayments && this.editMode) {
               await FApp.database().ref(`/SPECIAL-October1st/registrations/${this.registrationSelected}/details`).set(this.registrationFromForm)
             }
             else {
@@ -527,7 +527,7 @@
       async deleteOwnRegistration() {
         const memberId = SAuth.state.user.uid
         if (window.confirm("Are you sure you want to delete this Registration?")) {
-          if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2') {
+          if (this.canManagePayments) {
             await FApp.database().ref(`/SPECIAL-October1st/registrations/${this.registrationSelected}`).remove()
           } else {
             await FApp.database().ref(`/SPECIAL-October1st/registrations/${memberId}`).remove()
@@ -539,7 +539,7 @@
       async editRegistration() {
         const memberId = SAuth.state.user.uid
         let registrationDetails
-        if (memberId === 'm2WyJpeiDtgjxXdeqnt83I3HSiF2')
+        if (this.canManagePayments)
           registrationDetails = _.get(this.specialTreeRegistrations, [this.registrationSelected, 'details'])
         else
           registrationDetails = _.get(this.specialTreeRegistrations, [memberId, 'details'])
