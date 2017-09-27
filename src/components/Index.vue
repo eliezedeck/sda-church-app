@@ -207,8 +207,8 @@
             <tr>
               <td>TOTAL</td>
               <td>{{processedRegistrationTree.totalRegistrantsCount}} registrants</td>
-              <td></td>
-              <td></td>
+              <td>{{processedRegistrationTree.totalChurchCoveredEntryFeesCount}} ({{processedRegistrationTree.totalChurchCoveredEntryFeesCount * 2000}} Ar)</td>
+              <td>{{processedRegistrationTree.totalChurchCoveredBusCount}} ({{processedRegistrationTree.totalChurchCoveredBusCount * 6000}} Ar)</td>
               <td></td>
             </tr>
             </tfoot>
@@ -390,7 +390,9 @@
 
       processedRegistrationTree() {
         const data = {
-          totalRegistrantsCount: 0
+          totalRegistrantsCount: 0,
+          totalChurchCoveredEntryFeesCount: 0,
+          totalChurchCoveredBusCount: 0
         }
 
         data.iterable = _.map(this.specialTreeRegistrations, (node, memberId) => {
@@ -404,6 +406,19 @@
 
           row.totalDue = this.computeRemainingDue(reg, memberId)
           data.totalRegistrantsCount += reg.length
+
+          _.forEach(node.details, reg => {
+            const isMember = reg.isChurchMember || reg.isSabbathSchoolMember
+            if (reg.wantsTransportation) {
+              if (isMember)
+                data.totalChurchCoveredBusCount++
+            }
+
+            if (reg.mustPayEntryFee) {
+              if (isMember)
+                data.totalChurchCoveredEntryFeesCount++
+            }
+          })
 
           return row
         })
