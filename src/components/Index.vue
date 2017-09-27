@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <h1 class="text-center">October 1st &mdash; <strong>Church Picnic</strong></h1></div>
       <div class="col-md-12">
-        <div v-if="user && memberHasName && !showRegistrationForm && !userRegistration" role="group" class="btn-group btn-group-justified">
+        <div v-if="false && user && memberHasName && !showRegistrationForm && !userRegistration" role="group" class="btn-group btn-group-justified">
           <a @click.prevent="showRegistrationForm = true" class="btn btn-primary btn-lg" role="button" href="#">
             <i class="glyphicon glyphicon-bell"></i> Register today
           </a>
@@ -207,14 +207,59 @@
             <tr>
               <td>TOTAL</td>
               <td>{{processedRegistrationTree.totalRegistrantsCount}} registrants</td>
-              <td>{{processedRegistrationTree.totalChurchCoveredEntryFeesCount}} ({{processedRegistrationTree.totalChurchCoveredEntryFeesCount * 2000}} Ar)</td>
-              <td>{{processedRegistrationTree.totalChurchCoveredBusCount}} ({{processedRegistrationTree.totalChurchCoveredBusCount * 6000}} Ar)</td>
+              <td>
+                <span v-if="canManagePayments">{{processedRegistrationTree.totalChurchCoveredEntryFeesCount}} ({{processedRegistrationTree.totalChurchCoveredEntryFeesCount * 2000}} Ar)</span>
+              </td>
+              <td>
+                <span v-if="canManagePayments">{{processedRegistrationTree.totalChurchCoveredBusCount}} ({{processedRegistrationTree.totalChurchCoveredBusCount * 6000}} Ar)</span>
+              </td>
               <td></td>
             </tr>
             </tfoot>
 
           </table>
         </div>
+
+        <div class="col-md-12">
+          <h4>List of persons going by Bus</h4>
+          <div class="table-responsive">
+            <table class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th>Registered by</th>
+                  <th>Names </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                    v-for="row in processedRegistrationTree.iterable" :key="row.memberId"
+                    v-if="row.totalChurchCoveredBusCount > 0"
+                >
+                  <td>
+                    <strong>{{memberName(row.memberId)}}</strong>
+                  </td>
+                  <td>
+                    <ol style="margin-bottom: 0">
+                      <li v-for="reg in row.details" :key="reg.memberId"
+                        v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)"
+                      >
+                        <span v-if="reg.memberId">{{memberName(row.memberId)}}</span>
+                        <span v-else>{{reg.name}}</span>
+                      </li>
+                    </ol>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>TOTAL</td>
+                  <td>{{processedRegistrationTree.totalChurchCoveredBusCount}}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -401,7 +446,8 @@
             details: reg,
             memberId,
             timestamp: node.timestamp,
-            totalDue: 0
+            totalDue: 0,
+            totalChurchCoveredBusCount: 0
           }
 
           row.totalDue = this.computeRemainingDue(reg, memberId)
@@ -410,8 +456,10 @@
           _.forEach(node.details, reg => {
             const isMember = reg.isChurchMember || reg.isSabbathSchoolMember
             if (reg.wantsTransportation) {
-              if (isMember)
+              if (isMember) {
                 data.totalChurchCoveredBusCount++
+                row.totalChurchCoveredBusCount++
+              }
             }
 
             if (reg.mustPayEntryFee) {
