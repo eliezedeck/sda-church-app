@@ -219,47 +219,46 @@
 
           </table>
         </div>
+      </div>
 
-        <div class="col-md-12">
-          <h4>List of persons going by Bus</h4>
-          <div class="table-responsive">
-            <table class="table table-striped table-condensed">
-              <thead>
-                <tr>
-                  <th>Registered by</th>
-                  <th>Names </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                    v-for="row in processedRegistrationTree.iterable" :key="row.memberId"
-                    v-if="row.totalChurchCoveredBusCount > 0"
-                >
-                  <td>
-                    <strong>{{memberName(row.memberId)}}</strong>
-                  </td>
-                  <td>
-                    <ol style="margin-bottom: 0">
-                      <li v-for="reg in row.details" :key="reg.memberId"
-                        v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)"
-                      >
-                        <span v-if="reg.memberId">{{memberName(row.memberId)}}</span>
-                        <span v-else>{{reg.name}}</span>
-                      </li>
-                    </ol>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>TOTAL</td>
-                  <td>{{processedRegistrationTree.totalChurchCoveredBusCount}}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+      <div class="col-md-12">
+        <h4>List of persons going by Bus</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-condensed">
+            <thead>
+              <tr>
+                <th>Registered by</th>
+                <th>Names </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                  v-for="row in processedRegistrationTree.iterable" :key="row.memberId"
+                  v-if="row.totalChurchCoveredBusCount > 0"
+              >
+                <td>
+                  <strong>{{memberName(row.memberId)}}</strong>
+                </td>
+                <td>
+                  <ol style="margin-bottom: 0">
+                    <li v-for="reg in row.details" :key="reg.memberId"
+                      v-if="reg.wantsTransportation && (reg.isChurchMember || reg.isSabbathSchoolMember)"
+                    >
+                      <span v-if="reg.memberId">{{memberName(row.memberId)}}</span>
+                      <span v-else>{{reg.name}}</span>
+                    </li>
+                  </ol>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>TOTAL</td>
+                <td>{{processedRegistrationTree.totalChurchCoveredBusCount}}</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-
       </div>
     </div>
   </div>
@@ -469,6 +468,11 @@
           })
 
           return row
+        })
+
+        // Sort by the Registration date
+        data.iterable = _.sortBy(data.iterable, (v) => {
+          return v.timestamp
         })
 
         return data
