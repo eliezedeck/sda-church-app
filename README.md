@@ -1,10 +1,21 @@
-# SDA Church App
+# church-app
 
-This is the Firebase version of this project.
+> Church application
 
-Firebase offers attractive features, here are ones that fired my interests to use this platform:
+## Build Setup
 
-- **Phone Auth** -- by far, this is the most attractive feature of all, at least for me. This is like killing 2 birds with 1 stone, I get user to login to the application, and I also get their confirmed phone number. What remains is to have the user fill-in his/her name in the profile page.
-- Realtime database, to make the application feel alive and interactive.
-- Free hosting + custom domain + SSL.
-- Tons of Mobile app features.
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:8080
+npm run dev
+
+# build for production with minification
+npm run build
+
+# build for production and view the bundle analyzer report
+npm run build --report
+```
+
+For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
