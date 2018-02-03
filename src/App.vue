@@ -6,6 +6,8 @@
   import 'bootstrap/dist/js/bootstrap'
   import 'bootstrap/dist/css/bootstrap.css'
   import 'typeface-abel'
+  import '@fortawesome/fontawesome'
+  import '@fortawesome/fontawesome-free-solid'
 
   export default {
     name: 'APP'

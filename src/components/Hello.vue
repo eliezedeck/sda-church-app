@@ -15,7 +15,7 @@
             </div>
           </div>
         </form>
-        <div role="group" class="btn-group"><button class="btn btn-primary" type="button"> <i class="fa fa-plus"></i> Add you Church</button></div>
+        <div role="group" class="btn-group"><button class="btn btn-primary" type="button"> <i class="fa fa-plus"></i> Add your Church</button></div>
         <table class="table table-bordered table-hover table-responsive" style="margin-top: 1rem">
           <thead>
           <tr>
