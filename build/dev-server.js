@@ -17,7 +17,7 @@ const webpackConfig = require('./webpack.dev.conf')
 // default port where dev server listens for incoming traffic
 const port = process.env.PORT || config.dev.port
 // automatically open browser, if not set will be false
-const autoOpenBrowser = !!config.dev.autoOpenBrowser
+const autoOpenBrowser = false // !!config.dev.autoOpenBrowser
 // Define HTTP proxies to your custom API backend
 // https://github.com/chimurai/http-proxy-middleware
 const proxyTable = config.dev.proxyTable
