@@ -10,7 +10,10 @@
           <div class="card text-light bg-dark">
             <div class="card-body">
               <h4 class="card-title">Add a church</h4>
-              <div class="form-group"><label>Church name</label><input type="text" autofocus autocomplete="off" class="form-control" /></div>
+              <div class="form-group">
+                <label>Church name</label>
+                <input type="text" autofocus autocomplete="off" class="form-control" />
+              </div>
               <div role="group" class="btn-group"><button class="btn btn-primary" type="button">Add </button><button class="btn btn-secondary" type="button">Cancel </button></div>
             </div>
           </div>
