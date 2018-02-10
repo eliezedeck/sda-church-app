@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container">
     <div class="row">
       <div class="col-12">
         <h1 class="text-center" style="margin-top: 1rem">Choose your church</h1>
@@ -29,11 +29,9 @@
         </div>
         <table class="table table-hover table-responsive" style="margin-top: 1rem">
           <tbody>
-          <tr>
-            <td>Cell 2</td>
-          </tr>
-          <tr>
-            <td>Cell 3</td>
+          <tr v-for="(church) in churches">
+            <td>{{church.name}}</td>
+            <td>Created on {{church.createdTS}}</td>
           </tr>
           </tbody>
         </table>
@@ -43,15 +41,18 @@
 </template>
 
 <script>
-import {fdb} from '../firebase/db'
+import {fdb, firestoreServerTS} from '../firebase/db'
 
 export default {
   name: 'hello',
 
   data () {
     return {
+      churches: [],
+
       form: {
-        name: ''
+        name: '',
+        createdTS: firestoreServerTS()
       },
 
       formError: '',
@@ -60,10 +61,18 @@ export default {
     }
   },
 
+  firestore () {
+    return {
+      churches: fdb.collection('churches').orderBy('name')
+    }
+  },
+
   methods: {
     async addChurch () {
       try {
         this.formInProgress = true
+
+        // Override doc
         await fdb.collection('churches').add(this.form)
 
         // Reset the page

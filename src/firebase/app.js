@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import VueFire from 'vuefire'
 import * as firebase from 'firebase'
 
 export default firebase.initializeApp({
@@ -9,4 +11,5 @@ export default firebase.initializeApp({
   messagingSenderId: '945746518532'
 })
 
+Vue.use(VueFire)
 console.log('App initialized')
