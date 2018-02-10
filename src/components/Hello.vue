@@ -6,28 +6,31 @@
         <p>If your church is not listed here, click the button bellow to add it.</p>
       </div>
       <div class="col-12">
-        <form>
+        <form v-if="showChurchForm" @submit.prevent.stop="addChurch()">
           <div class="card text-light bg-dark">
             <div class="card-body">
               <h4 class="card-title">Add a church</h4>
               <div class="form-group">
                 <label>Church name</label>
-                <input type="text" autofocus autocomplete="off" class="form-control" />
+                <input v-model="form.name" type="text" autofocus autocomplete="off" class="form-control" />
               </div>
-              <div role="group" class="btn-group"><button class="btn btn-primary" type="button">Add </button><button class="btn btn-secondary" type="button">Cancel </button></div>
+
+              <p v-if="formError" class="text-danger">{{formError}}</p>
+
+              <div role="group" class="btn-group">
+                <button class="btn btn-primary" type="submit">Add</button>
+                <button @click="showChurchForm = false" class="btn btn-secondary" type="button">Cancel</button>
+              </div>
             </div>
           </div>
         </form>
-        <div role="group" class="btn-group"><button class="btn btn-primary" type="button"> <i class="fa fa-plus"></i> Add your Church</button></div>
-        <table class="table table-bordered table-hover table-responsive" style="margin-top: 1rem">
-          <thead>
-          <tr>
-            <th>Name</th>
-          </tr>
-          </thead>
+        <div v-if="!showChurchForm" role="group" class="btn-group">
+          <button @click="showChurchForm = true" class="btn btn-primary" type="button"> <i class="fa fa-plus"></i> Add your Church</button>
+        </div>
+        <table class="table table-hover table-responsive" style="margin-top: 1rem">
           <tbody>
           <tr>
-            <td>Cell 1</td>
+            <td>Cell 2</td>
           </tr>
           <tr>
             <td>Cell 3</td>
@@ -40,8 +43,38 @@
 </template>
 
 <script>
+import {fdb} from '../firebase/db'
+
 export default {
-  name: 'hello'
+  name: 'hello',
+
+  data () {
+    return {
+      form: {
+        name: ''
+      },
+
+      formError: '',
+      showChurchForm: false
+    }
+  },
+
+  methods: {
+    async addChurch () {
+      try {
+        await fdb.collection('churches').add(this.form)
+
+        // Reset the page
+        this.formError = ''
+        this.showChurchForm = false
+        this.form = {
+          name: ''
+        }
+      } catch (e) {
+        this.formError = 'Could not add your church: ' + e.message
+      }
+    }
+  }
 }
 </script>
 

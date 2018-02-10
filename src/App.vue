@@ -18,7 +18,7 @@
 
 <style>
   * {
-    font-family: "Abel";
+    font-family: "Abel", sans-serif;
   }
 
   div.form-group > label {
