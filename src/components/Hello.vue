@@ -18,7 +18,7 @@
               <p v-if="formError" class="text-danger">{{formError}}</p>
 
               <div role="group" class="btn-group">
-                <button class="btn btn-primary" type="submit">Add</button>
+                <button :disabled="formInProgress" class="btn btn-primary" type="submit">Add</button>
                 <button @click="showChurchForm = false" class="btn btn-secondary" type="button">Cancel</button>
               </div>
             </div>
@@ -55,6 +55,7 @@ export default {
       },
 
       formError: '',
+      formInProgress: false,
       showChurchForm: false
     }
   },
@@ -62,6 +63,7 @@ export default {
   methods: {
     async addChurch () {
       try {
+        this.formInProgress = true
         await fdb.collection('churches').add(this.form)
 
         // Reset the page
@@ -72,6 +74,8 @@ export default {
         }
       } catch (e) {
         this.formError = 'Could not add your church: ' + e.message
+      } finally {
+        this.formInProgress = false
       }
     }
   }
