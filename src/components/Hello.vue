@@ -29,7 +29,7 @@
         </div>
         <table class="table table-hover table-responsive" style="margin-top: 1rem">
           <tbody>
-          <tr v-for="(church) in churches">
+          <tr v-for="(church) in churches" @click="$router.push({name: 'Church', params: {churchId: church.id}})">
             <td>{{church.name}}</td>
             <td>Created on {{church.createdTS}}</td>
           </tr>
