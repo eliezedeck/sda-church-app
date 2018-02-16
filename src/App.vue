@@ -36,9 +36,18 @@ export default {
     }
 
     DB.connect(connectTarget)
-    DB.ready(() => {
-      this.baqendReady = true
+    DB.ready(async () => {
       console.log('Connected to server.')
+
+      if (DB.User.me === null) {
+        // Login as root for now ... FIXME: implement registrations and accounts
+        await DB.User.login('root', 'root')
+        console.log('Logged-in ...')
+      } else {
+        console.log('Already logged-in ...')
+      }
+
+      this.baqendReady = true
     })
   }
 }
