@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import DB from 'baqend/realtime'
 import DepartmentForm from './forms/DepartmentForm'
 
 export default {
@@ -42,6 +43,17 @@ export default {
 
       departments: []
     }
+  },
+
+  created () {
+    const query = DB.Department.find()
+    this.subDepartments = query.resultStream(result => {
+      console.log(result)
+    })
+  },
+
+  beforeDestroy () {
+    this.subDepartments && this.subDepartments.unsubscribe()
   },
 
   components: {
