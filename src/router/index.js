@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Hello from '../components/Hello'
 import Church from '../components/Church'
+import Department from '../components/Department'
 
 Vue.use(Router)
 
@@ -11,13 +11,13 @@ export default new Router({
     {
       path: '/',
       name: 'Hello',
-      component: Hello
+      component: Church
     },
 
     {
-      path: '/church/:churchId',
-      name: 'Church',
-      component: Church
+      path: '/department/:departmentId',
+      name: 'Department',
+      component: Department
     }
   ]
 })

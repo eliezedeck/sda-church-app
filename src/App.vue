@@ -9,8 +9,6 @@
   import '@fortawesome/fontawesome'
   import '@fortawesome/fontawesome-free-solid'
 
-  import './firebase/app'
-
   export default {
     name: 'APP'
   }

@@ -1,12 +1,8 @@
 <template>
   <div class="container">
-    <div v-if="church === null">
-      <h1 style="margin-top: 1rem">Loading ...</h1>
-    </div>
-
-    <div v-if="church !== null" class="row">
+    <div class="row">
       <div class="col-12">
-        <h1 style="margin-top: 1rem">{{church.name}}</h1>
+        <h1 style="margin-top: 1rem">Welcome</h1>
       </div>
       <div class="col-12">
         <div role="group" class="btn-group">
@@ -33,22 +29,12 @@
 </template>
 
 <script>
-import {fdb} from '../firebase/db'
-
 export default {
   name: 'Church',
 
   data () {
     return {
-      church: null,
       departments: []
-    }
-  },
-
-  firestore () {
-    return {
-      church: fdb.collection('churches').doc(this.$route.params.churchId),
-      departments: fdb.collection('churches').doc(this.$route.params.churchId).collection('departments').orderBy('name')
     }
   }
 }
