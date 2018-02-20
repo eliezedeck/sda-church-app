@@ -1,9 +1,7 @@
-// import the native http module
 const http = require('http')
 const path = require('path')
 const fs = require('fs')
 
-// import gun
 const Gun = require('gun')
 
 const server = http.createServer(function(req, res) {
@@ -13,7 +11,12 @@ const server = http.createServer(function(req, res) {
 
   res.writeHead(404, {'Content-Type': 'text/plain'})
   res.end('Sorry. Page not found.')
-});
+})
+
+const gun = Gun({
+  file: 'data.json',
+  web: server,
+})
 
 // start listening for requests
 server.listen(8000)
