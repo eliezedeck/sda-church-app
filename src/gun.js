@@ -17,6 +17,11 @@ Vue.use({
 
         if (typeof this.$options.gun === 'object') {
           if (typeof this.$options.gun.mappedSets === 'object') {
+
+            //
+            // mappedSets
+            //
+
             const ms = this.$options.gun.mappedSets
             for (const gunPath in ms) {
               const templateVarName = ms[gunPath]
@@ -32,7 +37,7 @@ Vue.use({
         this.gunMapSet = (gunPath, templateVarName) => {
           const store = this.gunTmpStore[gunPath] = {}
           const doUpdate = _.debounce(() => {
-            this[templateVarName] = store
+            this.$set(this, templateVarName, store) // Vue object update
           }, 20)
 
           gun.get(gunPath).map().on((node, id) => {
@@ -47,6 +52,11 @@ Vue.use({
 
         if (typeof this.$options.gun === 'object') {
           if (typeof this.$options.gun.mappedSets === 'object') {
+
+            //
+            // mappedSets
+            //
+
             const ms = this.$options.gun.mappedSets
             for (const gunPath in ms) {
               const templateVarName = ms[gunPath]
@@ -60,6 +70,11 @@ Vue.use({
       destroyed () {
         if (typeof this.$options.gun === 'object') {
           if (typeof this.$options.gun.mappedSets === 'object') {
+
+            //
+            // mappedSets
+            //
+
             const ms = this.$options.gun.mappedSets
             for (const gunPath in ms) {
               gun.get(gunPath).off()

@@ -4,7 +4,8 @@
       <div class="col-12">
         <h1 style="margin-top: 1rem">Welcome</h1>
       </div>
-      <div class="col-12">
+
+      <div v-if="$route.name === 'Church'" class="col-12">
         <div v-if="!showDepartmentForm" role="group" class="btn-group">
           <button @click="showDepartmentForm = true" class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Add a Department</button>
         </div>
@@ -20,13 +21,15 @@
             </thead>
             <tbody>
             <tr v-for="(department) in departments" :key="department.id">
-              <td>{{department.name}}</td>
+              <td @click="$router.push({name: 'Department', params: {departmentId: department.id}})">{{department.name}}</td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+
+    <router-view v-if="$route.name === 'Department' && departments !== {}" :department="departments[`department/${$route.params.departmentId}`]"></router-view>
   </div>
 </template>
 

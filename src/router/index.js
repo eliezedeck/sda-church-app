@@ -11,13 +11,14 @@ export default new Router({
     {
       path: '/',
       name: 'Church',
+      children: [
+        {
+          path: '/department/:departmentId',
+          name: 'Department',
+          component: Department
+        }
+      ],
       component: Church
-    },
-
-    {
-      path: '/department/:departmentId',
-      name: 'Department',
-      component: Department
     }
   ]
 })

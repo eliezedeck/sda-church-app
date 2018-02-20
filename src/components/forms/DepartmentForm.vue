@@ -2,7 +2,9 @@
   <form @submit.prevent.stop="saveDepartment()">
     <div class="card text-light bg-dark">
       <div class="card-body">
-        <h4 class="card-title">Add a department</h4>
+        <h4 v-if="department" class="card-title">Edit a department</h4>
+        <h4 v-else class="card-title">Add a department</h4>
+
         <div class="form-group">
           <label>Department name</label>
           <input v-model="departmentForm.name" class="form-control" type="text" autofocus autocomplete="off" />
@@ -11,7 +13,7 @@
         <p v-if="departmentFormError" class="text-danger card-text">{{departmentFormError}}</p>
 
         <div class="btn-group" role="group">
-          <button :disabled="departmentForm.name.length < 2 || departmentFormProgressing" class="btn btn-primary" type="submit">Add</button>
+          <button :disabled="departmentForm.name.length < 2 || departmentFormProgressing" class="btn btn-primary" type="submit">Save</button>
           <button @click="$emit('dismissed')" class="btn btn-secondary" type="button">Cancel</button>
         </div>
       </div>
@@ -25,20 +27,36 @@ import uuidv4 from 'uuid/v4'
 export default {
   name: 'DepartmentForm',
 
+  props: ['department'],
+
   data () {
-    return {
+    const data = {
       departmentFormError: '',
       departmentFormProgressing: false,
       departmentForm: {
         name: ''
       }
     }
+
+    if (this.department) {
+      data.departmentForm.name = this.department.name
+    }
+
+    return data
   },
 
   methods: {
     async saveDepartment () {
       try {
         this.departmentFormError = ''
+        this.departmentFormProgressing = true
+
+        if (this.department) {
+          // Do an update
+          this.$gun.get(`department/${this.department.id}`).put({name: this.departmentForm.name})
+          this.$emit('dismissed')
+          return
+        }
 
         const department = {
           id: uuidv4(),
@@ -65,11 +83,10 @@ export default {
         this.$gun.get('accounts').set(a)
 
         this.$emit('dismissed')
-
-        this.departmentFormProgressing = true
       } catch (e) {
-        this.departmentFormProgressing = false
         this.departmentFormError = e.message
+      } finally {
+        this.departmentFormProgressing = false
       }
     }
   }
