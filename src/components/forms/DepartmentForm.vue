@@ -7,7 +7,7 @@
 
         <div class="form-group">
           <label>Department name</label>
-          <input v-model="departmentForm.name" class="form-control" type="text" autofocus autocomplete="off" />
+          <input v-model.trim="departmentForm.name" class="form-control" type="text" autofocus autocomplete="off" />
         </div>
 
         <p v-if="departmentFormError" class="text-danger card-text">{{departmentFormError}}</p>

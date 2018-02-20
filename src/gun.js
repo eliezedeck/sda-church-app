@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Gun from 'gun/gun'
-import _ from 'lodash'
+import 'gun/lib/open'
 
 // Create a global instance of GUN
 const gun = new Gun({
@@ -16,13 +16,13 @@ Vue.use({
         const data = {}
 
         if (typeof this.$options.gun === 'object') {
-          if (typeof this.$options.gun.mappedSets === 'object') {
+          if (typeof this.$options.gun.open === 'object') {
 
             //
-            // mappedSets
+            // map
             //
 
-            const ms = this.$options.gun.mappedSets
+            const ms = this.$options.gun.open
             for (const gunPath in ms) {
               const templateVarName = ms[gunPath]
               data[templateVarName] = {} // prepare the template to have the data
@@ -33,34 +33,19 @@ Vue.use({
       },
 
       mounted () {
-        this.gunTmpStore = {}
-        this.gunMapSet = (gunPath, templateVarName) => {
-          const store = this.gunTmpStore[gunPath] = {}
-          const doUpdate = _.debounce(() => {
-            this.$set(this, templateVarName, store) // Vue object update
-          }, 20)
-
-          gun.get(gunPath).map().on((node, id) => {
-            if (node) {
-              store[id] = node
-            } else {
-              delete store[id]
-            }
-            doUpdate()
-          })
-        }
-
         if (typeof this.$options.gun === 'object') {
-          if (typeof this.$options.gun.mappedSets === 'object') {
+          if (typeof this.$options.gun.open === 'object') {
 
             //
-            // mappedSets
+            // map
             //
 
-            const ms = this.$options.gun.mappedSets
+            const ms = this.$options.gun.open
             for (const gunPath in ms) {
               const templateVarName = ms[gunPath]
-              this.gunMapSet(gunPath, templateVarName)
+              gun.get(gunPath).open((node) => {
+                this[templateVarName] = Object.assign({}, node)
+              })
               console.log(`Mapping gun ${gunPath} => ${templateVarName}`)
             }
           }
@@ -69,17 +54,16 @@ Vue.use({
 
       destroyed () {
         if (typeof this.$options.gun === 'object') {
-          if (typeof this.$options.gun.mappedSets === 'object') {
+          if (typeof this.$options.gun.open === 'object') {
 
             //
-            // mappedSets
+            // map
             //
 
-            const ms = this.$options.gun.mappedSets
+            const ms = this.$options.gun.open
             for (const gunPath in ms) {
               gun.get(gunPath).off()
-              const templateVarName = ms[gunPath]
-              console.log(`Unmapped gun ${gunPath} => ${templateVarName}`)
+              console.log(`Unmapped gun ${gunPath} => ${ms[gunPath]}`)
             }
           }
         }

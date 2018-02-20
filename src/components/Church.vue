@@ -46,7 +46,7 @@ export default {
   },
 
   gun: {
-    mappedSets: {
+    open: {
       'departments': 'departments'
     }
   },
