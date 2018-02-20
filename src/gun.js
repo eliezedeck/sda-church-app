@@ -45,8 +45,9 @@ Vue.use({
               const templateVarName = ms[gunPath]
               gun.get(gunPath).open((node) => {
                 this[templateVarName] = Object.assign({}, node)
+                console.log(`Updated GUN data ${gunPath} ...`)
               })
-              console.log(`Mapping gun ${gunPath} => ${templateVarName}`)
+              console.log(`Mapping GUN ${gunPath} => ${templateVarName}`)
             }
           }
         }
@@ -63,7 +64,7 @@ Vue.use({
             const ms = this.$options.gun.open
             for (const gunPath in ms) {
               gun.get(gunPath).off()
-              console.log(`Unmapped gun ${gunPath} => ${ms[gunPath]}`)
+              console.log(`Unmapped GUN ${gunPath} => ${ms[gunPath]}`)
             }
           }
         }
