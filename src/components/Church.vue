@@ -15,11 +15,11 @@
           <table class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>Department name</th>
+              <th>Department name ({{departmentsCount}})</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(department) in departments">
+            <tr v-for="(department) in departments" :key="department.id">
               <td>{{department.name}}</td>
             </tr>
             </tbody>
@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import DB from 'baqend/realtime'
 import DepartmentForm from './forms/DepartmentForm'
 
 export default {
@@ -39,22 +38,20 @@ export default {
 
   data () {
     return {
-      showDepartmentForm: false,
-
-      departments: []
+      showDepartmentForm: false
     }
   },
 
-  created () {
-    const query = DB.SCA_Department.find()
-      .ascending('name')
-    this.subDepartments = query.resultStream(result => {
-      this.departments = result
-    })
+  gun: {
+    mappedSets: {
+      'departments': 'departments'
+    }
   },
 
-  beforeDestroy () {
-    this.subDepartments && this.subDepartments.unsubscribe()
+  computed: {
+    departmentsCount () {
+      return Object.keys(this.departments).length
+    }
   },
 
   components: {
