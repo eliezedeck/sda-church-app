@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import DB from 'baqend/realtime'
+import uuidv4 from 'uuid/v4'
 
 export default {
   name: 'DepartmentForm',
@@ -38,20 +38,38 @@ export default {
   methods: {
     async saveDepartment () {
       try {
-        const department = new DB.SCA_Department(this.departmentForm)
-        department.account = new DB.SCA_Account({
+        this.departmentFormError = ''
+
+        const department = {
+          id: uuidv4(),
+          ...this.departmentForm
+          // account: linked to `account` below
+        }
+
+        const account = {
+          id: uuidv4(),
           name: this.departmentForm.name,
           currentBalance: 0,
-          isDepartmentAccount: true,
-          department
-        })
+          isDepartmentAccount: true
+          // department: linked to `department`
+        }
 
-        await department.save({depth: true})
+        const d = this.$gun.get(`department/${department.id}`).put(department)
+        const a = this.$gun.get(`account/${account.id}`).put(account)
+
+        // Link
+        this.$gun.get('department').get(department.id).get('account').put(a)
+        this.$gun.get('account').get(account.id).get('department').put(d)
+        // List
+        this.$gun.get('departments').set(d)
+        this.$gun.get('accounts').set(a)
+
         this.$emit('dismissed')
 
         this.departmentFormProgressing = true
       } catch (e) {
         this.departmentFormProgressing = false
+        this.departmentFormError = e.message
       }
     }
   }
