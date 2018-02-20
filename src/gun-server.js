@@ -11,10 +11,8 @@ const server = http.createServer(function(req, res) {
     return
   } // filters gun requests!
 
-  fs.createReadStream(path.join(__dirname, req.url)).on('error', function() { // static files!
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end(fs.readFileSync(path.join(__dirname, 'index.html'))); // or default to index
-  }).pipe(res); // stream
+  res.writeHead(404, {'Content-Type': 'text/plain'})
+  res.end('Sorry. Page not found.')
 });
 
 // start listening for requests
