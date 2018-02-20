@@ -46,9 +46,10 @@ export default {
   },
 
   created () {
-    const query = DB.Department.find()
+    const query = DB.SCA_Department.find()
+      .ascending('name')
     this.subDepartments = query.resultStream(result => {
-      console.log(result)
+      this.departments = result
     })
   },
 

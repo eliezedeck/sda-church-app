@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form @submit.prevent.stop="saveDepartment()">
     <div class="card text-light bg-dark">
       <div class="card-body">
         <h4 class="card-title">Add a department</h4>
@@ -11,7 +11,7 @@
         <p v-if="departmentFormError" class="text-danger card-text">{{departmentFormError}}</p>
 
         <div class="btn-group" role="group">
-          <button @click="saveDepartment()" :disabled="departmentForm.name.length < 2 || departmentFormProgressing" class="btn btn-primary" type="button">Add</button>
+          <button :disabled="departmentForm.name.length < 2 || departmentFormProgressing" class="btn btn-primary" type="submit">Add</button>
           <button @click="$emit('dismissed')" class="btn btn-secondary" type="button">Cancel</button>
         </div>
       </div>
@@ -38,8 +38,8 @@ export default {
   methods: {
     async saveDepartment () {
       try {
-        const department = new DB.Department(this.departmentForm)
-        department.account = new DB.Account({
+        const department = new DB.SCA_Department(this.departmentForm)
+        department.account = new DB.SCA_Account({
           name: this.departmentForm.name,
           currentBalance: 0,
           isDepartmentAccount: true,
