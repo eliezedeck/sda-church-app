@@ -38,11 +38,11 @@
           <table class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>Account name ({{$store.state.gunAccounts.setCount}})</th>
+              <th>Account name ({{$store.state.gunAccounts.unlinkedSetCount}})</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(account) in $store.state.gunAccounts.set" :key="account.id">
+            <tr v-for="(account) in $store.state.gunAccounts.unlinkedSet" :key="account.id">
               <td>{{account.name}}</td>
             </tr>
             </tbody>

@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent.stop="saveAccount()">
+  <form @submit.prevent.stop="$store.dispatch('gunAccounts/add', form), $emit('dismissed')">
     <div class="card text-light bg-dark">
       <div class="card-body">
         <h4 class="card-title">Add an account</h4>
@@ -12,7 +12,7 @@
           <label for="formCheck-1" class="form-check-label">Account is not linked to a department</label>
         </div>
         <div role="group" class="btn-group" style="margin-top: 1rem">
-          <button class="btn btn-primary" type="submit">Save</button>
+          <button :disabled="form.name.length < 2" class="btn btn-primary" type="submit">Save</button>
           <button @click="$emit('dismissed')" class="btn btn-secondary" type="button">Cancel</button>
         </div>
       </div>
@@ -30,12 +30,6 @@ export default {
         name: '',
         isDepartmentAccount: false
       }
-    }
-  },
-
-  methods: {
-    saveAccount () {
-      this.$emit('dismissed')
     }
   }
 }
