@@ -38,15 +38,12 @@
           <table class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>Account name</th>
+              <th>Account name ({{$store.state.gunAccounts.setCount}})</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>Cell 1</td>
-            </tr>
-            <tr>
-              <td>Cell 3</td>
+            <tr v-for="(account) in $store.state.gunAccounts.set" :key="account.id">
+              <td>{{account.name}}</td>
             </tr>
             </tbody>
           </table>
