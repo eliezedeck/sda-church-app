@@ -72,3 +72,5 @@ Vue.use({
     })
   }
 })
+
+export default gun

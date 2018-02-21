@@ -12,7 +12,11 @@ import '@fortawesome/fontawesome'
 import '@fortawesome/fontawesome-free-solid'
 
 export default {
-  name: 'APP'
+  name: 'APP',
+
+  created () {
+    this.$store.dispatch('gunAccounts/subscribe')
+  }
 }
 </script>
 
