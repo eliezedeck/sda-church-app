@@ -9,7 +9,7 @@
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
-    "serve-gun": "node src/gun-server.js"
+    "gun-server": "node src/gun-server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.3",
