@@ -21,6 +21,7 @@
                 <th>Session name</th>
                 <th>Total inputted</th>
                 <th>Date</th>
+                <th>Status</th>
               </tr>
               </thead>
               <tbody>
@@ -28,11 +29,13 @@
                 <td>Cell 1</td>
                 <td>Cell 2</td>
                 <td>Cell 2</td>
+                <td>Closed</td>
               </tr>
               <tr>
                 <td>Cell 3</td>
                 <td>Cell 2</td>
                 <td>Cell 4</td>
+                <td>Open</td>
               </tr>
               </tbody>
             </table>
