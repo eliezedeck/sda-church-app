@@ -38,7 +38,7 @@
           <table class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>Account name ({{$store.state.gunAccounts.unlinkedSetCount}})</th>
+              <th>Account name ({{$store.state.gunAccounts.unlinkedSetCount}} unlinked / {{$store.state.gunAccounts.setCount}})</th>
             </tr>
             </thead>
             <tbody>
@@ -52,6 +52,7 @@
     </div>
 
     <router-view v-if="$route.name === 'Department' && departments !== {}" :department="departments[`department/${$route.params.departmentId}`]"></router-view>
+    <router-view v-else></router-view>
   </div>
 </template>
 

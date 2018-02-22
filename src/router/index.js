@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Church from '../components/Church'
 import Department from '../components/Department'
+import TreasuryInputSessions from '../components/TreasuryInputSessions'
 
 Vue.use(Router)
 
@@ -16,6 +17,12 @@ export default new Router({
           path: '/department/:departmentId',
           name: 'Department',
           component: Department
+        },
+
+        {
+          path: '/treasury/input-sessions',
+          name: 'TreasuryInputSessions',
+          component: TreasuryInputSessions
         }
       ],
       component: Church
