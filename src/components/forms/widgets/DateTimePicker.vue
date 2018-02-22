@@ -13,6 +13,7 @@
 
 <script>
 import $ from 'jquery'
+import moment from 'moment'
 import 'tempusdominus-bootstrap-4'
 import 'tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.css'
 
@@ -38,6 +39,11 @@ export default {
       default () {
         return new Date()
       }
+    },
+
+    snapTo: {
+      type: String,
+      default: ''
     }
   },
 
@@ -50,9 +56,16 @@ export default {
   },
 
   mounted () {
+    let date = this.value
+
+    if (this.snapTo === 'day') {
+      date = moment(date).startOf('day').toDate()
+      this.$emit('input', date)
+    }
+
     const options = {
       format: this.format,
-      date: this.value
+      date
     }
 
     if (this.mode === 'inline') {
@@ -61,7 +74,11 @@ export default {
 
     $(this.element$).datetimepicker(options)
     $(this.element$).on('change.datetimepicker', (e) => {
-      this.$emit('input', e.date.toDate())
+      if (this.snapTo === 'day') {
+        this.$emit('input', moment(e.date.toDate()).startOf('day').toDate())
+      } else {
+        this.$emit('input', e.date.toDate())
+      }
     })
 
     // For some reason, this is not available inside beforeDestroy(), so we store this reference
