@@ -15,7 +15,7 @@
       <div class="row" style="margin-top: 1rem">
         <div class="col">
           <div class="table-responsive">
-            <table class="table">
+            <table class="table table-hover">
               <thead>
               <tr>
                 <th>Session name</th>
@@ -25,17 +25,11 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td>Cell 1</td>
+              <tr v-for="session in resortedSessions" :key="session.id">
+                <td>{{session.name}}</td>
                 <td>Cell 2</td>
                 <td>Cell 2</td>
-                <td>Closed</td>
-              </tr>
-              <tr>
-                <td>Cell 3</td>
-                <td>Cell 2</td>
-                <td>Cell 4</td>
-                <td>Open</td>
+                <td>{{session.isOpen === true ? 'Open' : 'Closed'}}</td>
               </tr>
               </tbody>
             </table>
@@ -47,6 +41,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import TreasuryInputSessionForm from './forms/TreasuryInputSessionForm'
 
 export default {
@@ -55,6 +50,23 @@ export default {
   data () {
     return {
       showSessionForm: false
+    }
+  },
+
+  gun: {
+    open: {
+      'treasuryInputSessions': 'sessions'
+    }
+  },
+
+  computed: {
+    resortedSessions () {
+      const result = {}
+      const reverseKeys = _.reverse(_.keys(this.sessions))
+      _.forEach(reverseKeys, (k) => {
+        result[k] = this.sessions[k]
+      })
+      return result
     }
   },
 
